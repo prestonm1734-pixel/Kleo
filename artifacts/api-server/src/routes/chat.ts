@@ -1,8 +1,37 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 
 const router = Router();
 
-router.post("/chat", async (req, res) => {
+const IP_WINDOW_MS = 60_000;
+const IP_MAX_REQUESTS = 20;
+const ipCounters = new Map<string, { count: number; resetAt: number }>();
+
+function getRateLimitKey(req: Request): string {
+  return (
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "unknown"
+  );
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipCounters.get(ip);
+  if (!entry || now > entry.resetAt) {
+    ipCounters.set(ip, { count: 1, resetAt: now + IP_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  if (entry.count > IP_MAX_REQUESTS) return true;
+  return false;
+}
+
+router.post("/chat", async (req: Request, res: Response) => {
+  const ip = getRateLimitKey(req);
+  if (isRateLimited(ip)) {
+    return res.status(429).json({ error: "Too many requests. Please wait a moment." });
+  }
+
   const { messages, agentId, systemPrompt, fileContent } = req.body;
 
   const apiKey = process.env.GEMINI_API_KEY;

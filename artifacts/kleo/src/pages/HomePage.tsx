@@ -19,6 +19,7 @@ export default function HomePage() {
   const [isChat, setIsChat] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pendingAttachments, setPendingAttachments] = useState<File[]>([]);
 
   useEffect(() => {
     const stored = getStoredUser();
@@ -41,9 +42,10 @@ export default function HomePage() {
     if (!user) return;
     const convo = createConversation(user.id, 'alex', text);
     setActiveConversation(convo);
+    setPendingAttachments(attachments || []);
     setIsChat(true);
     refreshConversations();
-    sessionStorage.setItem('kleo_pending_message', JSON.stringify({ text, hasAttachments: !!attachments?.length }));
+    sessionStorage.setItem('kleo_pending_message', JSON.stringify({ text }));
   }
 
   function handleNewConversation() {
@@ -83,6 +85,7 @@ export default function HomePage() {
           onSelectConversation={handleSelectConversation}
           onConversationsChange={refreshConversations}
           onUserChange={(u) => setUser(u)}
+          pendingAttachments={pendingAttachments}
         />
       ) : (
         <HomeScreen user={user} onSendMessage={handleSendFromHome} />

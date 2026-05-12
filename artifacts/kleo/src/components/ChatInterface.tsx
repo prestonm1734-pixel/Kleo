@@ -19,6 +19,7 @@ interface ChatInterfaceProps {
   onSelectConversation: (id: string) => void;
   onConversationsChange: () => void;
   onUserChange: (user: User) => void;
+  pendingAttachments?: File[];
 }
 
 export default function ChatInterface({
@@ -29,6 +30,7 @@ export default function ChatInterface({
   onSelectConversation,
   onConversationsChange,
   onUserChange,
+  pendingAttachments,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(conversation.messages);
   const [streamingContent, setStreamingContent] = useState('');
@@ -54,7 +56,10 @@ export default function ChatInterface({
       try {
         const { text } = JSON.parse(pending);
         if (text) {
-          setTimeout(() => handleSendMessage(text), 100);
+          const attachments = pendingAttachments && pendingAttachments.length > 0
+            ? pendingAttachments
+            : undefined;
+          setTimeout(() => handleSendMessage(text, attachments), 100);
         }
       } catch {}
     }
