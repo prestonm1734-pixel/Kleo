@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#F2F1EE",
-        "input-bg": "#ECEAE4",
-        "sidebar-bg": "#E8E6E0",
-        accent: "#505A98",
-        "text-primary": "#1A1A1A",
-        "text-muted": "#888888",
+        background: "#FAF9F7",
+        "input-bg": "#F0EDE6",
+        "sidebar-bg": "#EFECE5",
+        accent: "#D97757",
+        "text-primary": "#1A1014",
+        "text-muted": "#706870",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
