@@ -1,95 +1,121 @@
+import { supabase, hasSupabase } from './supabase';
 import { Conversation, Message } from '../types';
 
 const KEY = (userId: string) => `kleo_convos_${userId}`;
 
-export function getConversations(userId: string): Conversation[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(KEY(userId));
-    const convos: Conversation[] = raw ? JSON.parse(raw) : [];
-    return convos.sort(
-      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
-  } catch {
-    return [];
-  }
+function generateTitle(text: string): string {
+  const stops = new Set(['the','a','an','is','are','i','my','me','we','can','do','how','what','should','help','need','want','have']);
+  const words = text.replace(/[^a-zA-Z0-9\s]/g, '').split(/\s+/)
+    .filter((w) => w.length > 2 && !stops.has(w.toLowerCase())).slice(0, 5);
+  return (words.length ? words : text.split(/\s+/).slice(0, 4))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }
 
-export function saveConversations(userId: string, convos: Conversation[]): void {
+// ── localStorage ────────────────────────────────────────────────────────────
+
+function localGet(userId: string): Conversation[] {
+  try {
+    const raw = localStorage.getItem(KEY(userId));
+    const list: Conversation[] = raw ? JSON.parse(raw) : [];
+    return list.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+  } catch { return []; }
+}
+
+function localSave(userId: string, convos: Conversation[]) {
   localStorage.setItem(KEY(userId), JSON.stringify(convos));
 }
 
-export function getConversation(userId: string, id: string): Conversation | undefined {
-  return getConversations(userId).find((c) => c.id === id);
+// ── Public API ──────────────────────────────────────────────────────────────
+
+export async function getConversations(userId: string): Promise<Conversation[]> {
+  if (hasSupabase && supabase) {
+    const { data } = await supabase
+      .from('conversations')
+      .select('*, messages(*)')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+    if (data) {
+      return data.map((row) => ({
+        id: row.id,
+        title: row.title,
+        messages: (row.messages || []).map((m: Record<string, string>) => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          createdAt: m.created_at,
+        })).sort((a: Message, b: Message) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+      }));
+    }
+  }
+  return localGet(userId);
 }
 
-export function createConversation(
-  userId: string,
-  agentId: string,
-  firstMessage?: string
-): Conversation {
-  const convos = getConversations(userId);
-  const convo: Conversation = {
-    id: crypto.randomUUID(),
-    title: firstMessage ? generateTitle(firstMessage) : 'New conversation',
-    messages: [],
-    agentId,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-  convos.unshift(convo);
-  saveConversations(userId, convos);
+export async function createConversation(userId: string, firstMessage?: string): Promise<Conversation> {
+  const title = firstMessage ? generateTitle(firstMessage) : 'New conversation';
+  const now = new Date().toISOString();
+
+  if (hasSupabase && supabase) {
+    const { data } = await supabase
+      .from('conversations')
+      .insert({ user_id: userId, title, created_at: now, updated_at: now })
+      .select()
+      .single();
+    if (data) {
+      return { id: data.id, title, messages: [], createdAt: data.created_at, updatedAt: data.updated_at };
+    }
+  }
+
+  const convo: Conversation = { id: crypto.randomUUID(), title, messages: [], createdAt: now, updatedAt: now };
+  const list = localGet(userId);
+  list.unshift(convo);
+  localSave(userId, list);
   return convo;
 }
 
-export function updateConversation(
-  userId: string,
-  id: string,
-  updates: Partial<Conversation>
-): void {
-  const convos = getConversations(userId);
-  const idx = convos.findIndex((c) => c.id === id);
-  if (idx >= 0) {
-    convos[idx] = { ...convos[idx], ...updates, updatedAt: new Date() };
-    saveConversations(userId, convos);
+export async function addMessage(userId: string, conversationId: string, message: Message): Promise<void> {
+  if (hasSupabase && supabase) {
+    await supabase.from('messages').insert({
+      id: message.id,
+      conversation_id: conversationId,
+      role: message.role,
+      content: message.content,
+      created_at: message.createdAt,
+    });
+    await supabase.from('conversations')
+      .update({ updated_at: new Date().toISOString() })
+      .eq('id', conversationId);
+    return;
   }
-}
 
-export function addMessage(
-  userId: string,
-  conversationId: string,
-  message: Message
-): void {
-  const convos = getConversations(userId);
-  const idx = convos.findIndex((c) => c.id === conversationId);
+  const list = localGet(userId);
+  const idx = list.findIndex((c) => c.id === conversationId);
   if (idx >= 0) {
-    convos[idx].messages.push(message);
-    convos[idx].updatedAt = new Date();
-    if (convos[idx].title === 'New conversation' && message.role === 'user') {
-      convos[idx].title = generateTitle(message.content);
+    list[idx].messages.push(message);
+    list[idx].updatedAt = new Date().toISOString();
+    if (list[idx].title === 'New conversation' && message.role === 'user') {
+      list[idx].title = generateTitle(message.content);
     }
-    saveConversations(userId, convos);
+    localSave(userId, list);
   }
 }
 
-export function deleteConversation(userId: string, id: string): void {
-  const convos = getConversations(userId).filter((c) => c.id !== id);
-  saveConversations(userId, convos);
+export async function updateConversationTitle(userId: string, conversationId: string, title: string): Promise<void> {
+  if (hasSupabase && supabase) {
+    await supabase.from('conversations').update({ title }).eq('id', conversationId);
+    return;
+  }
+  const list = localGet(userId);
+  const idx = list.findIndex((c) => c.id === conversationId);
+  if (idx >= 0) { list[idx].title = title; localSave(userId, list); }
 }
 
-function generateTitle(text: string): string {
-  const stopwords = new Set(['the', 'a', 'an', 'is', 'are', 'was', 'were', 'i', 'my', 'me', 'we', 'our', 'can', 'do', 'how', 'what', 'should', 'would', 'could', 'help', 'need', 'want', 'have', 'has']);
-  const words = text
-    .replace(/[^a-zA-Z0-9\s]/g, '')
-    .split(/\s+/)
-    .filter((w) => w.length > 2 && !stopwords.has(w.toLowerCase()))
-    .slice(0, 4);
-
-  if (words.length === 0) {
-    return text.split(/\s+/).slice(0, 4).join(' ');
+export async function deleteConversation(userId: string, conversationId: string): Promise<void> {
+  if (hasSupabase && supabase) {
+    await supabase.from('conversations').delete().eq('id', conversationId);
+    return;
   }
-
-  return words
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(' ');
+  const list = localGet(userId).filter((c) => c.id !== conversationId);
+  localSave(userId, list);
 }

@@ -3,45 +3,30 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  avatar?: string;
-  tier: 'free' | 'pro' | 'elite';
-  messageCount: number;
-  messageCountDate: string;
 }
 
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  agentId?: string;
-  timestamp: Date;
-  attachments?: Attachment[];
+  createdAt: string;
 }
 
 export interface Conversation {
   id: string;
   title: string;
   messages: Message[];
-  agentId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Attachment {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  data?: string;
-}
-
-export interface Agent {
-  id: string;
-  name: string;
-  role: string;
-  specialty: string;
-  avatarColor: string;
-  systemPrompt: string;
-  tier: 'free' | 'pro' | 'elite';
-  team: 'personal' | 'business' | 'markets';
+export interface FinancialData {
+  netWorth: number;
+  netWorthChangePct: number;
+  cashOnHand: number;
+  accountCount: number;
+  burnRate: number;
+  burnRateChangePct: number;
+  sparkData: number[];
+  isPlaid: boolean;
 }
