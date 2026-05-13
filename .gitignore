@@ -47,3 +47,11 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Next.js (root-level artifacts from local dev)
+.next/
+next-env.d.ts
+
+# Environment variables (never commit secrets)
+.env.local
+.env*.local
