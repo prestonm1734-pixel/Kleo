@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "cd artifacts/kleo-nextjs && npm install && npm run build",
+  "outputDirectory": "artifacts/kleo-nextjs/.next",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "installCommand": "echo skip"
 }
