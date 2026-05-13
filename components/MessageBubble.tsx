@@ -14,88 +14,104 @@ export default function MessageBubble({ message, isStreaming }: MessageBubblePro
   const isUser = message.role === 'user';
   const agent = message.agentId ? getAgentById(message.agentId) : null;
 
+  // Centering wrapper used by both user and assistant
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <div
+      style={{
+        maxWidth: 720,
+        margin: '0 auto',
+        width: '100%',
+        padding: '0 20px',
+        marginBottom: 4,
+      }}
+    >
+      {children}
+    </div>
+  );
+
   if (isUser) {
     return (
-      <div className="flex justify-end mb-4 px-4">
-        <div
-          className="max-w-[75%] px-4 py-3"
-          style={{
-            background: '#505A98',
-            color: 'white',
-            borderRadius: '18px 18px 4px 18px',
-            fontSize: 17,
-            fontWeight: 500,
-            lineHeight: 1.5,
-            wordBreak: 'break-word',
-          }}
-        >
-          {message.content}
+      <Wrapper>
+        <div className="flex justify-end mb-2">
+          <div
+            style={{
+              background: '#505A98',
+              color: 'white',
+              borderRadius: '16px 16px 4px 16px',
+              padding: '10px 16px',
+              fontSize: 15,
+              fontWeight: 500,
+              lineHeight: 1.55,
+              maxWidth: '75%',
+              wordBreak: 'break-word',
+            }}
+          >
+            {message.content}
+          </div>
         </div>
-      </div>
+      </Wrapper>
     );
   }
 
   return (
-    <div className="flex flex-col mb-4 px-4">
-      {/* Agent identifier */}
-      {agent && (
-        <div
-          className="flex items-center gap-1.5 mb-2"
-          style={{ fontSize: 10, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-        >
-          <span
+    <Wrapper>
+      <div className="mb-4">
+        {/* Agent label */}
+        {agent && (
+          <div
+            className="flex items-center gap-1.5 mb-1.5"
             style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: agent.avatarColor,
-              display: 'inline-block',
-              flexShrink: 0,
+              fontSize: 10,
+              color: '#AAAAAA',
+              textTransform: 'uppercase',
+              letterSpacing: '0.07em',
             }}
-          />
-          <span>{agent.name}</span>
-        </div>
-      )}
+          >
+            <span
+              style={{
+                width: 5,
+                height: 5,
+                borderRadius: '50%',
+                background: agent.avatarColor,
+                display: 'inline-block',
+                flexShrink: 0,
+              }}
+            />
+            {agent.name}
+          </div>
+        )}
 
-      {/* Response card */}
-      <div
-        className="max-w-[85%]"
-        style={{
-          background: '#FFFFFF',
-          borderRadius: 16,
-          padding: '16px 20px',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)',
-        }}
-      >
-        <div className="prose-kleo">
+        {/* Response prose — no card, clean like Claude.ai */}
+        <div
+          className="prose-kleo"
+          style={{ fontSize: 15, lineHeight: 1.65, color: '#1A1A1A' }}
+        >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => (
-                <p style={{ marginBottom: '0.75em', lineHeight: 1.6 }}>{children}</p>
+                <p style={{ marginBottom: '0.8em', lineHeight: 1.65 }}>{children}</p>
               ),
               strong: ({ children }) => (
-                <strong style={{ fontWeight: 600 }}>{children}</strong>
+                <strong style={{ fontWeight: 600, color: '#111111' }}>{children}</strong>
               ),
-              em: ({ children }) => <em>{children}</em>,
+              em: ({ children }) => <em style={{ fontStyle: 'italic' }}>{children}</em>,
               h1: ({ children }) => (
-                <h1 style={{ fontSize: '1.3em', fontWeight: 600, marginBottom: '0.5em', marginTop: '1em' }}>{children}</h1>
+                <h1 style={{ fontSize: '1.25em', fontWeight: 600, margin: '1em 0 0.4em', color: '#111' }}>{children}</h1>
               ),
               h2: ({ children }) => (
-                <h2 style={{ fontSize: '1.15em', fontWeight: 600, marginBottom: '0.5em', marginTop: '1em' }}>{children}</h2>
+                <h2 style={{ fontSize: '1.1em', fontWeight: 600, margin: '1em 0 0.4em', color: '#111' }}>{children}</h2>
               ),
               h3: ({ children }) => (
-                <h3 style={{ fontSize: '1.05em', fontWeight: 600, marginBottom: '0.4em', marginTop: '0.8em' }}>{children}</h3>
+                <h3 style={{ fontSize: '1em', fontWeight: 600, margin: '0.8em 0 0.3em', color: '#111' }}>{children}</h3>
               ),
               ul: ({ children }) => (
-                <ul style={{ paddingLeft: '1.5em', marginBottom: '0.75em' }}>{children}</ul>
+                <ul style={{ paddingLeft: '1.4em', marginBottom: '0.8em' }}>{children}</ul>
               ),
               ol: ({ children }) => (
-                <ol style={{ paddingLeft: '1.5em', marginBottom: '0.75em' }}>{children}</ol>
+                <ol style={{ paddingLeft: '1.4em', marginBottom: '0.8em' }}>{children}</ol>
               ),
-              li: ({ children }) => (
-                <li style={{ marginBottom: '0.25em' }}>{children}</li>
-              ),
+              li: ({ children }) => <li style={{ marginBottom: '0.2em' }}>{children}</li>,
               hr: () => (
                 <hr style={{ border: 'none', borderTop: '1px solid rgba(0,0,0,0.1)', margin: '1em 0' }} />
               ),
@@ -103,13 +119,30 @@ export default function MessageBubble({ message, isStreaming }: MessageBubblePro
                 const isBlock = className?.includes('language-');
                 if (isBlock) {
                   return (
-                    <pre style={{ background: 'rgba(0,0,0,0.06)', padding: '0.75em 1em', borderRadius: 8, overflowX: 'auto', marginBottom: '0.75em' }}>
-                      <code style={{ fontFamily: 'monospace', fontSize: '0.9em' }}>{children}</code>
+                    <pre
+                      style={{
+                        background: '#ECEAE4',
+                        padding: '12px 16px',
+                        borderRadius: 10,
+                        overflowX: 'auto',
+                        marginBottom: '0.8em',
+                        fontSize: '0.88em',
+                      }}
+                    >
+                      <code style={{ fontFamily: 'monospace' }}>{children}</code>
                     </pre>
                   );
                 }
                 return (
-                  <code style={{ fontFamily: 'monospace', fontSize: '0.9em', background: 'rgba(0,0,0,0.06)', padding: '0.1em 0.3em', borderRadius: 4 }}>
+                  <code
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.88em',
+                      background: '#ECEAE4',
+                      padding: '0.1em 0.35em',
+                      borderRadius: 4,
+                    }}
+                  >
                     {children}
                   </code>
                 );
@@ -120,18 +153,19 @@ export default function MessageBubble({ message, isStreaming }: MessageBubblePro
           </ReactMarkdown>
           {isStreaming && (
             <span
-              className="inline-block ml-0.5"
               style={{
+                display: 'inline-block',
                 width: 2,
                 height: '1em',
                 background: '#505A98',
                 verticalAlign: 'text-bottom',
+                marginLeft: 1,
                 animation: 'blink 1s step-end infinite',
               }}
             />
           )}
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 }

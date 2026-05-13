@@ -39,8 +39,35 @@ html, body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.12);
   border-radius: 2px;
+}
+
+/* ── Sidebar responsive ── */
+/* Desktop sidebar: hidden on mobile, flex on md+ */
+.sidebar-desktop {
+  display: none;
+}
+@media (min-width: 768px) {
+  .sidebar-desktop {
+    display: flex;
+  }
+}
+
+/* Hamburger: visible on mobile only */
+.sidebar-hamburger {
+  display: flex;
+}
+@media (min-width: 768px) {
+  .sidebar-hamburger {
+    display: none;
+  }
+}
+
+/* ── Input bar focus ring ── */
+.input-bar-focus:focus-within {
+  border-color: rgba(80, 90, 152, 0.32) !important;
+  box-shadow: 0 0 0 3px rgba(80, 90, 152, 0.07);
 }
 
 /* Word fade-in streaming animation */

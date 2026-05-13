@@ -67,37 +67,37 @@ export default function InputBar({
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* Message counter for free tier */}
+      {/* Free tier counter */}
       {tier === 'free' && (
         <p
           style={{
-            fontSize: 12,
-            color: '#888888',
+            fontSize: 11,
+            color: isLimitReached ? '#C0392B' : '#AAAAAA',
             textAlign: 'center',
-            marginBottom: 8,
+            marginBottom: 6,
           }}
         >
           {isLimitReached
-            ? 'Daily limit reached. Upgrade to continue.'
+            ? 'Daily limit reached — upgrade to continue'
             : `${remaining} of 10 messages remaining today`}
         </p>
       )}
 
-      {/* Attached files */}
+      {/* File chips */}
       {files.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2 px-2">
+        <div className="flex flex-wrap gap-1.5 mb-2 px-1">
           {files.map((f, i) => (
             <div
               key={i}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs"
-              style={{ background: '#ECEAE4', color: '#1A1A1A' }}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs"
+              style={{ background: '#ECEAE4', color: '#444' }}
             >
-              <span className="truncate max-w-[120px]">{f.name}</span>
+              <span className="truncate max-w-[110px]">{f.name}</span>
               <button
                 onClick={() => removeFile(i)}
-                className="ml-1 opacity-60 hover:opacity-100 transition-opacity"
+                className="ml-0.5 opacity-50 hover:opacity-100 transition-opacity"
               >
-                <X size={12} />
+                <X size={11} />
               </button>
             </div>
           ))}
@@ -106,20 +106,21 @@ export default function InputBar({
 
       {/* Input container */}
       <div
-        className="flex items-end gap-2 rounded-2xl px-4 py-3"
+        className="input-bar-focus flex items-end gap-2 rounded-2xl px-4 py-3.5"
         style={{
           background: '#ECEAE4',
-          border: '1px solid rgba(0,0,0,0.06)',
+          border: '1.5px solid rgba(0,0,0,0.08)',
+          transition: 'border-color 0.15s, box-shadow 0.15s',
         }}
       >
         {/* Paperclip */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex-shrink-0 opacity-50 hover:opacity-80 transition-opacity mb-0.5"
-          style={{ color: '#1A1A1A' }}
+          className="flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity mb-0.5"
           type="button"
+          style={{ color: '#333' }}
         >
-          <Paperclip size={20} />
+          <Paperclip size={18} />
         </button>
         <input
           ref={fileInputRef}
@@ -139,7 +140,7 @@ export default function InputBar({
           placeholder={isLimitReached ? 'Upgrade to send more messages' : placeholder}
           disabled={disabled || isLimitReached}
           rows={1}
-          className="flex-1 resize-none bg-transparent text-sm leading-relaxed"
+          className="flex-1 resize-none bg-transparent leading-relaxed"
           style={{
             fontSize: 15,
             color: '#1A1A1A',
@@ -158,11 +159,11 @@ export default function InputBar({
           className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all mb-0.5"
           style={{
             background: canSend ? '#505A98' : 'rgba(0,0,0,0.1)',
-            color: canSend ? 'white' : 'rgba(0,0,0,0.3)',
+            color: canSend ? 'white' : 'rgba(0,0,0,0.25)',
           }}
           type="button"
         >
-          <ArrowUp size={16} />
+          <ArrowUp size={15} />
         </button>
       </div>
     </div>

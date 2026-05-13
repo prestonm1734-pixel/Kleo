@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Menu } from 'lucide-react';
 import KleoLogo from './KleoLogo';
 import InputBar from './InputBar';
 import { User } from '@/types';
@@ -8,9 +9,10 @@ import { User } from '@/types';
 interface HomeScreenProps {
   user: User;
   onSendMessage: (text: string, attachments?: File[]) => void;
+  onOpenMobileSidebar: () => void;
 }
 
-export default function HomeScreen({ user, onSendMessage }: HomeScreenProps) {
+export default function HomeScreen({ user, onSendMessage, onOpenMobileSidebar }: HomeScreenProps) {
   const [insight, setInsight] = useState('');
   const [insightVisible, setInsightVisible] = useState(false);
 
@@ -33,36 +35,60 @@ export default function HomeScreen({ user, onSendMessage }: HomeScreenProps) {
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ background: '#F2F1EE' }}>
-      {/* Center content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-32">
+    <div
+      className="flex flex-col h-full"
+      style={{ background: '#F2F1EE' }}
+    >
+      {/* Mobile-only top bar with hamburger */}
+      <div
+        className="sidebar-hamburger flex items-center px-4 pt-3 pb-1 flex-shrink-0"
+      >
+        <button
+          onClick={onOpenMobileSidebar}
+          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+        >
+          <Menu size={19} style={{ color: '#555' }} />
+        </button>
+      </div>
+
+      {/* Centered content */}
+      <div
+        className="flex-1 flex flex-col items-center justify-center px-8"
+        style={{ paddingBottom: 32 }}
+      >
         {/* KLEO label */}
         <p
           style={{
-            fontSize: 11,
-            fontWeight: 300,
+            fontSize: 10,
+            fontWeight: 400,
             letterSpacing: '0.5em',
-            color: '#888888',
+            color: '#AAAAAA',
             textTransform: 'uppercase',
-            marginBottom: 24,
+            marginBottom: 20,
           }}
         >
           KLEO
         </p>
 
-        {/* Logo */}
-        <div style={{ marginBottom: 28 }}>
-          <KleoLogo size={80} animate bgColor="#F2F1EE" accentColor="#505A98" />
+        {/* Logo — interactive with breathing segments */}
+        <div style={{ marginBottom: 24 }}>
+          <KleoLogo
+            size={68}
+            bgColor="#F2F1EE"
+            accentColor="#505A98"
+            interactive
+          />
         </div>
 
         {/* Greeting */}
         <h1
           style={{
-            fontSize: 28,
+            fontSize: 26,
             fontWeight: 600,
             color: '#1A1A1A',
-            marginBottom: 12,
+            marginBottom: 10,
             textAlign: 'center',
+            letterSpacing: '-0.01em',
           }}
         >
           Welcome back, {user.firstName}.
@@ -72,20 +98,24 @@ export default function HomeScreen({ user, onSendMessage }: HomeScreenProps) {
         <p
           style={{
             fontSize: 14,
-            fontWeight: 300,
-            color: '#888888',
+            fontWeight: 400,
+            color: '#999999',
             textAlign: 'center',
-            maxWidth: 320,
+            maxWidth: 300,
+            lineHeight: 1.55,
             opacity: insightVisible ? 1 : 0,
-            transition: 'opacity 0.3s ease-in-out',
+            transition: 'opacity 0.4s ease-in-out',
           }}
         >
           {insight}
         </p>
       </div>
 
-      {/* Input bar pinned to bottom */}
-      <div className="fixed bottom-0 left-0 right-0 px-4 pb-6 pt-2" style={{ background: '#F2F1EE' }}>
+      {/* Input bar pinned to bottom of right column */}
+      <div
+        className="flex-shrink-0"
+        style={{ padding: '0 16px 28px', background: '#F2F1EE' }}
+      >
         <InputBar
           onSend={onSendMessage}
           placeholder="Ask me anything about your finances..."

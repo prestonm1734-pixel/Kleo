@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Menu, Plus, Edit3 } from 'lucide-react';
+import { Menu, Edit3 } from 'lucide-react';
 import InputBar from './InputBar';
 import MessageBubble from './MessageBubble';
 import AgentSelector from './AgentSelector';
 import FinanceTeamSheet from './FinanceTeamSheet';
-import Sidebar from './Sidebar';
 import UpgradeModal from './UpgradeModal';
 import { Message, User, Conversation } from '@/types';
 import { routeMessage, getAgentById } from '@/lib/agents';
@@ -16,21 +15,19 @@ import { getRemainingMessages, incrementMessageCount } from '@/lib/auth';
 interface ChatInterfaceProps {
   user: User;
   conversation: Conversation;
-  allConversations: Conversation[];
   onNewConversation: () => void;
-  onSelectConversation: (id: string) => void;
   onConversationsChange: () => void;
   onUserChange: (user: User) => void;
+  onOpenMobileSidebar: () => void;
 }
 
 export default function ChatInterface({
   user,
   conversation,
-  allConversations,
   onNewConversation,
-  onSelectConversation,
   onConversationsChange,
   onUserChange,
+  onOpenMobileSidebar,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(conversation.messages);
   const [streamingContent, setStreamingContent] = useState('');
@@ -38,13 +35,11 @@ export default function ChatInterface({
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentAgentId, setCurrentAgentId] = useState(conversation.agentId || 'alex');
   const [showTeamSheet, setShowTeamSheet] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Sync when conversation changes
   useEffect(() => {
     setMessages(conversation.messages);
     setCurrentAgentId(conversation.agentId || 'alex');
@@ -57,9 +52,7 @@ export default function ChatInterface({
       sessionStorage.removeItem('kleo_pending_message');
       try {
         const { text } = JSON.parse(pending);
-        if (text) {
-          setTimeout(() => handleSendMessage(text), 100);
-        }
+        if (text) setTimeout(() => handleSendMessage(text), 100);
       } catch {}
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,19 +71,16 @@ export default function ChatInterface({
       return;
     }
 
-    // Route to correct agent
     const routedAgentId = routeMessage(text, currentUser.tier);
     const targetAgentId = currentAgentId !== 'alex' ? currentAgentId : routedAgentId;
     setCurrentAgentId(targetAgentId);
 
-    // Increment message count
     if (currentUser.tier === 'free') {
       const updated = incrementMessageCount(currentUser);
       setCurrentUser(updated);
       onUserChange(updated);
     }
 
-    // Add user message
     const userMsg: Message = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -102,7 +92,6 @@ export default function ChatInterface({
     setMessages(updatedMessages);
     addMessage(currentUser.id, conversation.id, userMsg);
 
-    // Process attachments if any
     let fileContent = '';
     if (attachments && attachments.length > 0) {
       for (const file of attachments) {
@@ -115,7 +104,6 @@ export default function ChatInterface({
       }
     }
 
-    // Stream response
     setIsStreaming(true);
     setStreamingContent('');
     setStreamingAgentId(targetAgentId);
@@ -128,10 +116,7 @@ export default function ChatInterface({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: updatedMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
           agentId: targetAgentId,
           systemPrompt: agentObj?.systemPrompt || '',
           fileContent,
@@ -139,9 +124,7 @@ export default function ChatInterface({
         signal: abortRef.current.signal,
       });
 
-      if (!response.ok || !response.body) {
-        throw new Error('Stream failed');
-      }
+      if (!response.ok || !response.body) throw new Error('Stream failed');
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -151,48 +134,43 @@ export default function ChatInterface({
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
-        for (const line of lines) {
+        for (const line of chunk.split('\n')) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim();
             if (data === '[DONE]') continue;
             try {
               const parsed = JSON.parse(data);
-              const text = parsed.text || parsed.candidates?.[0]?.content?.parts?.[0]?.text || '';
-              if (text) {
-                full += text;
-                setStreamingContent(full);
-              }
+              const t = parsed.text || '';
+              if (t) { full += t; setStreamingContent(full); }
             } catch {}
           }
         }
       }
 
-      // Finalize message
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: full || 'I apologize, I could not generate a response. Please check your API key.',
+        content: full || 'I could not generate a response. Please check your API key.',
         agentId: targetAgentId,
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
       addMessage(currentUser.id, conversation.id, assistantMsg);
-
-      // Update conversation agent
       updateConversation(currentUser.id, conversation.id, { agentId: targetAgentId });
       onConversationsChange();
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') return;
-      const errorMsg: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: 'Something went wrong. Please check your API key in the environment settings and try again.',
-        agentId: targetAgentId,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          role: 'assistant',
+          content: 'Something went wrong. Please check your API key and try again.',
+          agentId: targetAgentId,
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setIsStreaming(false);
       setStreamingContent('');
@@ -208,43 +186,38 @@ export default function ChatInterface({
     <div className="flex flex-col h-full" style={{ background: '#F2F1EE' }}>
       {/* Top bar */}
       <div
-        className="flex items-center justify-between px-4 pt-12 pb-3 flex-shrink-0"
+        className="flex items-center justify-between flex-shrink-0"
         style={{
-          background: '#F2F1EE',
+          padding: '10px 14px 10px',
           borderBottom: '1px solid rgba(0,0,0,0.06)',
+          background: '#F2F1EE',
         }}
       >
+        {/* Mobile hamburger / desktop spacer */}
         <button
-          onClick={() => setShowSidebar(true)}
-          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          onClick={onOpenMobileSidebar}
+          className="sidebar-hamburger flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
         >
-          <Menu size={20} style={{ color: '#1A1A1A' }} />
+          <Menu size={19} style={{ color: '#555' }} />
         </button>
 
-        <AgentSelector
-          agentId={currentAgentId}
-          onOpen={() => setShowTeamSheet(true)}
-        />
+        <AgentSelector agentId={currentAgentId} onOpen={() => setShowTeamSheet(true)} />
 
         <button
           onClick={onNewConversation}
           className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          title="New conversation"
         >
-          <Edit3 size={18} style={{ color: '#1A1A1A' }} />
+          <Edit3 size={17} style={{ color: '#555' }} />
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto pt-4 pb-2">
+      <div className="flex-1 overflow-y-auto" style={{ paddingTop: 16, paddingBottom: 8 }}>
         {messages.map((msg, i) => (
-          <MessageBubble
-            key={msg.id || i}
-            message={msg}
-            isStreaming={false}
-          />
+          <MessageBubble key={msg.id || i} message={msg} isStreaming={false} />
         ))}
 
-        {/* Streaming message */}
         {isStreaming && streamingContent && (
           <MessageBubble
             message={{
@@ -258,28 +231,21 @@ export default function ChatInterface({
           />
         )}
 
-        {/* Loading dots when streaming but no content yet */}
         {isStreaming && !streamingContent && (
-          <div className="flex mb-4 px-4">
-            <div
-              className="px-4 py-3 rounded-2xl"
-              style={{
-                background: '#FFFFFF',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-              }}
-            >
-              <div className="flex gap-1">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="w-2 h-2 rounded-full"
-                    style={{
-                      background: '#888888',
-                      animation: `blink 1.2s ease-in-out ${i * 0.2}s infinite`,
-                    }}
-                  />
-                ))}
-              </div>
+          <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 20px 16px' }}>
+            <div className="flex gap-1.5 py-1">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-full"
+                  style={{
+                    width: 7,
+                    height: 7,
+                    background: '#BBBBBB',
+                    animation: `blink 1.2s ease-in-out ${i * 0.2}s infinite`,
+                  }}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -288,7 +254,10 @@ export default function ChatInterface({
       </div>
 
       {/* Input bar */}
-      <div className="px-4 pb-6 pt-2 flex-shrink-0" style={{ background: '#F2F1EE' }}>
+      <div
+        className="flex-shrink-0"
+        style={{ padding: '8px 16px 24px', background: '#F2F1EE' }}
+      >
         <InputBar
           onSend={handleSendMessage}
           placeholder={inputPlaceholder}
@@ -299,24 +268,18 @@ export default function ChatInterface({
         />
       </div>
 
-      {/* Finance Team Sheet */}
       {showTeamSheet && (
         <FinanceTeamSheet
           currentAgentId={currentAgentId}
           userTier={currentUser.tier}
           onSelectAgent={(id) => {
-            // Check if user can access agent
             const a = getAgentById(id);
             if (!a) return;
             if (currentUser.tier === 'free' && a.tier !== 'free') {
-              setShowTeamSheet(false);
-              setShowUpgrade(true);
-              return;
+              setShowTeamSheet(false); setShowUpgrade(true); return;
             }
             if (currentUser.tier === 'pro' && a.tier === 'elite') {
-              setShowTeamSheet(false);
-              setShowUpgrade(true);
-              return;
+              setShowTeamSheet(false); setShowUpgrade(true); return;
             }
             setCurrentAgentId(id);
             updateConversation(currentUser.id, conversation.id, { agentId: id });
@@ -325,21 +288,6 @@ export default function ChatInterface({
         />
       )}
 
-      {/* Sidebar */}
-      {showSidebar && (
-        <Sidebar
-          user={currentUser}
-          conversations={allConversations}
-          activeConversationId={conversation.id}
-          onSelectConversation={onSelectConversation}
-          onNewConversation={onNewConversation}
-          onSelectAgent={setCurrentAgentId}
-          onClose={() => setShowSidebar(false)}
-          onConversationsChange={onConversationsChange}
-        />
-      )}
-
-      {/* Upgrade modal */}
       {showUpgrade && (
         <UpgradeModal
           user={currentUser}

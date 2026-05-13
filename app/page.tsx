@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import HomeScreen from '@/components/HomeScreen';
 import ChatInterface from '@/components/ChatInterface';
 import Sidebar from '@/components/Sidebar';
-import UpgradeModal from '@/components/UpgradeModal';
-import { getStoredUser } from '@/lib/auth';
+import { getStoredUser, updateUser } from '@/lib/auth';
 import {
   getConversations,
   createConversation,
@@ -20,7 +19,7 @@ export default function Home() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [isChat, setIsChat] = useState(false);
-  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,8 +29,7 @@ export default function Home() {
       return;
     }
     setUser(stored);
-    const convos = getConversations(stored.id);
-    setConversations(convos);
+    setConversations(getConversations(stored.id));
     setLoading(false);
   }, []);
 
@@ -46,13 +44,13 @@ export default function Home() {
     setActiveConversation(convo);
     setIsChat(true);
     refreshConversations();
-    // The ChatInterface will handle the actual send
-    // We pass the first message via session storage so ChatInterface can send it
-    sessionStorage.setItem('kleo_pending_message', JSON.stringify({ text, hasAttachments: !!attachments?.length }));
+    sessionStorage.setItem(
+      'kleo_pending_message',
+      JSON.stringify({ text, hasAttachments: !!attachments?.length })
+    );
   }
 
   function handleNewConversation() {
-    if (!user) return;
     setActiveConversation(null);
     setIsChat(false);
   }
@@ -66,10 +64,28 @@ export default function Home() {
     }
   }
 
+  function handleUserChange(u: User) {
+    setUser(u);
+    updateUser(u);
+  }
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full" style={{ background: '#F2F1EE' }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid #505A98', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+      <div
+        className="flex items-center justify-center"
+        style={{ height: '100dvh', background: '#F2F1EE' }}
+      >
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <div
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            border: '2px solid #505A98',
+            borderTopColor: 'transparent',
+            animation: 'spin 0.8s linear infinite',
+          }}
+        />
       </div>
     );
   }
@@ -77,21 +93,60 @@ export default function Home() {
   if (!user) return null;
 
   return (
-    <>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      {isChat && activeConversation ? (
-        <ChatInterface
+    <div
+      style={{
+        display: 'flex',
+        height: '100dvh',
+        background: '#F2F1EE',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Desktop sidebar — hidden on mobile via CSS */}
+      <div className="sidebar-desktop">
+        <Sidebar
+          mode="desktop"
           user={user}
-          conversation={activeConversation}
-          allConversations={conversations}
-          onNewConversation={handleNewConversation}
+          conversations={conversations}
+          activeConversationId={activeConversation?.id}
           onSelectConversation={handleSelectConversation}
+          onNewConversation={handleNewConversation}
           onConversationsChange={refreshConversations}
-          onUserChange={(u) => setUser(u)}
         />
-      ) : (
-        <HomeScreen user={user} onSendMessage={handleSendFromHome} />
+      </div>
+
+      {/* Mobile overlay sidebar */}
+      {showMobileSidebar && (
+        <Sidebar
+          mode="mobile-overlay"
+          user={user}
+          conversations={conversations}
+          activeConversationId={activeConversation?.id}
+          onSelectConversation={handleSelectConversation}
+          onNewConversation={handleNewConversation}
+          onConversationsChange={refreshConversations}
+          onClose={() => setShowMobileSidebar(false)}
+        />
       )}
-    </>
+
+      {/* Main content */}
+      <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        {isChat && activeConversation ? (
+          <ChatInterface
+            user={user}
+            conversation={activeConversation}
+            onNewConversation={handleNewConversation}
+            onConversationsChange={refreshConversations}
+            onUserChange={handleUserChange}
+            onOpenMobileSidebar={() => setShowMobileSidebar(true)}
+          />
+        ) : (
+          <HomeScreen
+            user={user}
+            onSendMessage={handleSendFromHome}
+            onOpenMobileSidebar={() => setShowMobileSidebar(true)}
+          />
+        )}
+      </div>
+    </div>
   );
 }
