@@ -3,7 +3,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Message } from '@/types';
-import { getAgentById } from '@/lib/agents';
 
 interface MessageBubbleProps {
   message: Message;
@@ -12,9 +11,7 @@ interface MessageBubbleProps {
 
 export default function MessageBubble({ message, isStreaming }: MessageBubbleProps) {
   const isUser = message.role === 'user';
-  const agent = message.agentId ? getAgentById(message.agentId) : null;
 
-  // Centering wrapper used by both user and assistant
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <div
       style={{
@@ -56,32 +53,6 @@ export default function MessageBubble({ message, isStreaming }: MessageBubblePro
   return (
     <Wrapper>
       <div className="mb-4">
-        {/* Agent label */}
-        {agent && (
-          <div
-            className="flex items-center gap-1.5 mb-1.5"
-            style={{
-              fontSize: 10,
-              color: '#AAAAAA',
-              textTransform: 'uppercase',
-              letterSpacing: '0.07em',
-            }}
-          >
-            <span
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: '50%',
-                background: agent.avatarColor,
-                display: 'inline-block',
-                flexShrink: 0,
-              }}
-            />
-            {agent.name}
-          </div>
-        )}
-
-        {/* Response prose — no card, clean like Claude.ai */}
         <div
           className="prose-kleo"
           style={{ fontSize: 15, lineHeight: 1.65, color: '#1A1A1A' }}
@@ -119,30 +90,13 @@ export default function MessageBubble({ message, isStreaming }: MessageBubblePro
                 const isBlock = className?.includes('language-');
                 if (isBlock) {
                   return (
-                    <pre
-                      style={{
-                        background: '#ECEAE4',
-                        padding: '12px 16px',
-                        borderRadius: 10,
-                        overflowX: 'auto',
-                        marginBottom: '0.8em',
-                        fontSize: '0.88em',
-                      }}
-                    >
+                    <pre style={{ background: '#ECEAE4', padding: '12px 16px', borderRadius: 10, overflowX: 'auto', marginBottom: '0.8em', fontSize: '0.88em' }}>
                       <code style={{ fontFamily: 'monospace' }}>{children}</code>
                     </pre>
                   );
                 }
                 return (
-                  <code
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: '0.88em',
-                      background: '#ECEAE4',
-                      padding: '0.1em 0.35em',
-                      borderRadius: 4,
-                    }}
-                  >
+                  <code style={{ fontFamily: 'monospace', fontSize: '0.88em', background: '#ECEAE4', padding: '0.1em 0.35em', borderRadius: 4 }}>
                     {children}
                   </code>
                 );

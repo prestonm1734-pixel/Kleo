@@ -20,41 +20,41 @@ interface Integration {
 
 const INTEGRATIONS: Integration[] = [
   // Banking
-  { id: 'plaid', name: 'Plaid', description: 'Connect your bank accounts', reads: 'Transactions, balances, spending patterns', powers: 'Sage, Alex, Maya', tier: 'pro', category: 'Banking', icon: '🏦' },
+  { id: 'plaid', name: 'Plaid', description: 'Connect your bank accounts', reads: 'Transactions, balances, spending patterns', powers: 'Kleo', tier: 'pro', category: 'Banking', icon: '🏦' },
   // Email
-  { id: 'gmail', name: 'Gmail', description: 'Scan financial emails', reads: 'Bills, statements, receipts', powers: 'Alex, Sage', tier: 'pro', category: 'Email', icon: '✉️' },
-  { id: 'outlook', name: 'Outlook', description: 'Scan financial emails', reads: 'Bills, statements, receipts', powers: 'Alex, Sage', tier: 'pro', category: 'Email', icon: '📧' },
+  { id: 'gmail', name: 'Gmail', description: 'Scan financial emails', reads: 'Bills, statements, receipts', powers: 'Kleo', tier: 'pro', category: 'Email', icon: '✉️' },
+  { id: 'outlook', name: 'Outlook', description: 'Scan financial emails', reads: 'Bills, statements, receipts', powers: 'Kleo', tier: 'pro', category: 'Email', icon: '📧' },
   // Calendar
-  { id: 'gcal', name: 'Google Calendar', description: 'Track financial events', reads: 'Bill due dates, financial appointments', powers: 'Alex', tier: 'pro', category: 'Calendar', icon: '📅' },
-  { id: 'apple-cal', name: 'Apple Calendar', description: 'Track financial events', reads: 'Bill due dates, financial appointments', powers: 'Alex', tier: 'pro', category: 'Calendar', icon: '🍎' },
+  { id: 'gcal', name: 'Google Calendar', description: 'Track financial events', reads: 'Bill due dates, financial appointments', powers: 'Kleo', tier: 'pro', category: 'Calendar', icon: '📅' },
+  { id: 'apple-cal', name: 'Apple Calendar', description: 'Track financial events', reads: 'Bill due dates, financial appointments', powers: 'Kleo', tier: 'pro', category: 'Calendar', icon: '🍎' },
   // Documents
-  { id: 'gdrive', name: 'Google Drive', description: 'Analyze financial documents', reads: 'Statements, contracts, tax docs', powers: 'Maya, Aria', tier: 'pro', category: 'Documents', icon: '📁' },
-  { id: 'dropbox', name: 'Dropbox', description: 'Analyze financial documents', reads: 'Statements, contracts, tax docs', powers: 'Maya, Aria', tier: 'pro', category: 'Documents', icon: '📦' },
+  { id: 'gdrive', name: 'Google Drive', description: 'Analyze financial documents', reads: 'Statements, contracts, tax docs', powers: 'Kleo', tier: 'pro', category: 'Documents', icon: '📁' },
+  { id: 'dropbox', name: 'Dropbox', description: 'Analyze financial documents', reads: 'Statements, contracts, tax docs', powers: 'Kleo', tier: 'pro', category: 'Documents', icon: '📦' },
   // Investing
-  { id: 'polygon', name: 'Polygon.io', description: 'Real-time market data', reads: 'Stock prices, market data, technicals', powers: 'Jordan, Knox', tier: 'free', category: 'Investing', icon: '📈' },
-  { id: 'finnhub', name: 'Finnhub', description: 'Analyst data & earnings', reads: 'Analyst ratings, price targets, earnings', powers: 'Jordan', tier: 'free', category: 'Investing', icon: '🔬' },
+  { id: 'polygon', name: 'Polygon.io', description: 'Real-time market data', reads: 'Stock prices, market data, technicals', powers: 'Kleo', tier: 'free', category: 'Investing', icon: '📈' },
+  { id: 'finnhub', name: 'Finnhub', description: 'Analyst data & earnings', reads: 'Analyst ratings, price targets, earnings', powers: 'Kleo', tier: 'free', category: 'Investing', icon: '🔬' },
   // Crypto
-  { id: 'coinbase', name: 'Coinbase', description: 'Crypto portfolio tracking', reads: 'Holdings, transactions, performance', powers: 'Cole', tier: 'elite', category: 'Crypto', icon: '₿' },
+  { id: 'coinbase', name: 'Coinbase', description: 'Crypto portfolio tracking', reads: 'Holdings, transactions, performance', powers: 'Kleo', tier: 'elite', category: 'Crypto', icon: '₿' },
   // Tax
-  { id: 'turbotax', name: 'TurboTax', description: 'Tax document analysis', reads: 'Prior returns, deductions history', powers: 'Maya, Cleo', tier: 'pro', category: 'Tax', icon: '🧾' },
+  { id: 'turbotax', name: 'TurboTax', description: 'Tax document analysis', reads: 'Prior returns, deductions history', powers: 'Kleo', tier: 'pro', category: 'Tax', icon: '🧾' },
   // Real Estate
-  { id: 'zillow', name: 'Zillow', description: 'Property valuations', reads: 'Home values, rental estimates, market data', powers: 'Zara', tier: 'pro', category: 'Real Estate', icon: '🏠' },
+  { id: 'zillow', name: 'Zillow', description: 'Property valuations', reads: 'Home values, rental estimates, market data', powers: 'Kleo', tier: 'pro', category: 'Real Estate', icon: '🏠' },
   // Credit
-  { id: 'experian', name: 'Experian', description: 'Credit monitoring', reads: 'Credit score, report, alerts', powers: 'Felix', tier: 'pro', category: 'Credit', icon: '💳' },
-  { id: 'equifax', name: 'Equifax', description: 'Credit monitoring', reads: 'Credit score, report, alerts', powers: 'Felix', tier: 'pro', category: 'Credit', icon: '🏅' },
+  { id: 'experian', name: 'Experian', description: 'Credit monitoring', reads: 'Credit score, report, alerts', powers: 'Kleo', tier: 'pro', category: 'Credit', icon: '💳' },
+  { id: 'equifax', name: 'Equifax', description: 'Credit monitoring', reads: 'Credit score, report, alerts', powers: 'Kleo', tier: 'pro', category: 'Credit', icon: '🏅' },
   // Business (Elite)
-  { id: 'quickbooks', name: 'QuickBooks', description: 'Business accounting', reads: 'P&L, cash flow, expenses, payroll', powers: 'Marcus, Cleo', tier: 'elite', category: 'Business', icon: '📊' },
-  { id: 'stripe', name: 'Stripe', description: 'Payment & revenue data', reads: 'Revenue, MRR, customer metrics', powers: 'Marcus, Vera', tier: 'elite', category: 'Business', icon: '💸' },
-  { id: 'shopify', name: 'Shopify', description: 'E-commerce analytics', reads: 'Sales, margins, inventory', powers: 'Marcus, Vera', tier: 'elite', category: 'Business', icon: '🛍️' },
-  { id: 'gusto', name: 'Gusto', description: 'Payroll & HR data', reads: 'Payroll costs, benefits, headcount', powers: 'Marcus', tier: 'elite', category: 'Business', icon: '👥' },
+  { id: 'quickbooks', name: 'QuickBooks', description: 'Business accounting', reads: 'P&L, cash flow, expenses, payroll', powers: 'Kleo', tier: 'elite', category: 'Business', icon: '📊' },
+  { id: 'stripe', name: 'Stripe', description: 'Payment & revenue data', reads: 'Revenue, MRR, customer metrics', powers: 'Kleo', tier: 'elite', category: 'Business', icon: '💸' },
+  { id: 'shopify', name: 'Shopify', description: 'E-commerce analytics', reads: 'Sales, margins, inventory', powers: 'Kleo', tier: 'elite', category: 'Business', icon: '🛍️' },
+  { id: 'gusto', name: 'Gusto', description: 'Payroll & HR data', reads: 'Payroll costs, benefits, headcount', powers: 'Kleo', tier: 'elite', category: 'Business', icon: '👥' },
   // Meetings (Elite)
-  { id: 'zoom', name: 'Zoom', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Marcus, Rex', tier: 'elite', category: 'Meetings', icon: '📹' },
-  { id: 'meet', name: 'Google Meet', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Marcus, Rex', tier: 'elite', category: 'Meetings', icon: '🎥' },
-  { id: 'teams', name: 'Teams', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Marcus, Rex', tier: 'elite', category: 'Meetings', icon: '💼' },
+  { id: 'zoom', name: 'Zoom', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Kleo', tier: 'elite', category: 'Meetings', icon: '📹' },
+  { id: 'meet', name: 'Google Meet', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Kleo', tier: 'elite', category: 'Meetings', icon: '🎥' },
+  { id: 'teams', name: 'Teams', description: 'Meeting summaries', reads: 'Financial meeting notes', powers: 'Kleo', tier: 'elite', category: 'Meetings', icon: '💼' },
   // Free APIs
-  { id: 'fred', name: 'FRED (Federal Reserve)', description: 'Economic indicators', reads: 'Fed funds rate, CPI, GDP, unemployment', powers: 'Knox, Maya', tier: 'free', category: 'Economics', icon: '🏛️' },
-  { id: 'bls', name: 'Bureau of Labor Statistics', description: 'Labor market data', reads: 'CPI, unemployment, wage growth', powers: 'Knox, Maya', tier: 'free', category: 'Economics', icon: '📉' },
-  { id: 'newsapi', name: 'NewsAPI', description: 'Financial news feed', reads: 'Market news, company news, economic news', powers: 'All agents', tier: 'free', category: 'News', icon: '📰' },
+  { id: 'fred', name: 'FRED (Federal Reserve)', description: 'Economic indicators', reads: 'Fed funds rate, CPI, GDP, unemployment', powers: 'Kleo', tier: 'free', category: 'Economics', icon: '🏛️' },
+  { id: 'bls', name: 'Bureau of Labor Statistics', description: 'Labor market data', reads: 'CPI, unemployment, wage growth', powers: 'Kleo', tier: 'free', category: 'Economics', icon: '📉' },
+  { id: 'newsapi', name: 'NewsAPI', description: 'Financial news feed', reads: 'Market news, company news, economic news', powers: 'Kleo', tier: 'free', category: 'News', icon: '📰' },
 ];
 
 const CATEGORIES = ['Banking', 'Email', 'Calendar', 'Documents', 'Investing', 'Crypto', 'Tax', 'Real Estate', 'Credit', 'Business', 'Meetings', 'Economics', 'News'];

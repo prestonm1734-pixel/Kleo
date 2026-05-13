@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { KLEO_SYSTEM_PROMPT } from '@/lib/agents';
 
 export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, agentId, systemPrompt, fileContent } = await req.json();
+    const { messages, fileContent } = await req.json();
 
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey || apiKey === 'your_gemini_api_key_here') {
       return new Response(
-        createSSEStream('I need a Gemini API key to respond. Please add your NEXT_PUBLIC_GEMINI_API_KEY to the .env.local file. Get a free key at aistudio.google.com'),
+        createSSEStream('I need a Gemini API key to respond. Please add your NEXT_PUBLIC_GEMINI_API_KEY to the .env.local file. Get a free key at aistudio.google.com.'),
         {
           headers: {
             'Content-Type': 'text/event-stream',
@@ -20,27 +21,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Build Gemini request
     const contents = messages.map((m: { role: string; content: string }) => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.content }],
     }));
 
-    // Add file content to last user message if present
+    // Append any file content to the last user message
     if (fileContent && contents.length > 0) {
       const lastUser = [...contents].reverse().find((c: { role: string }) => c.role === 'user');
-      if (lastUser) {
-        lastUser.parts[0].text += fileContent;
-      }
+      if (lastUser) lastUser.parts[0].text += fileContent;
     }
 
     const body = {
       system_instruction: {
-        parts: [{ text: systemPrompt }],
+        parts: [{ text: KLEO_SYSTEM_PROMPT }],
       },
       contents,
       generationConfig: {
-        temperature: 0.8,
+        temperature: 0.85,
         maxOutputTokens: 2048,
       },
     };
@@ -57,17 +55,11 @@ export async function POST(req: NextRequest) {
     if (!geminiRes.ok || !geminiRes.body) {
       const errText = await geminiRes.text();
       return new Response(
-        createSSEStream(`API error: ${geminiRes.status}. ${errText.slice(0, 200)}`),
-        {
-          headers: {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-          },
-        }
+        createSSEStream(`API error ${geminiRes.status}: ${errText.slice(0, 200)}`),
+        { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' } }
       );
     }
 
-    // Proxy the SSE stream
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
     const encoder = new TextEncoder();
@@ -111,7 +103,7 @@ export async function POST(req: NextRequest) {
         'Connection': 'keep-alive',
       },
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

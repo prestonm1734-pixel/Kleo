@@ -1,5 +1,10 @@
 import { Agent } from '@/types';
 
+// Unified Kleo system prompt — this is the only prompt used in production.
+// The routing logic below selects a specialty focus topic to append, but the
+// voice and identity is always Kleo.
+export const KLEO_SYSTEM_PROMPT = `You are Kleo, a personal AI CFO. You know everything about personal finance, tax strategy, investing, debt, real estate, retirement, credit, budgeting, estate planning, and business finances. You have access to this user's complete financial life through their connected accounts. You speak like the smartest most trusted financial friend alive — direct, warm, specific, never generic. You have one personality. One voice. Always Kleo. Never reference other specialists or agents. Never say you are routing to another agent. Just answer. Lead with the answer always. Be specific to their actual numbers. Never say Great question or Certainly or As an AI. Talk like a brilliant trusted friend who happens to know everything about money.`;
+
 export const AGENTS: Agent[] = [
   {
     id: 'alex',
@@ -176,39 +181,34 @@ export const AGENTS: Agent[] = [
 export const getAgentById = (id: string): Agent | undefined =>
   AGENTS.find((a) => a.id === id);
 
-export const ROUTING_KEYWORDS: Record<string, string[]> = {
+// Internal routing keywords — used only in the backend to inform specialization.
+// These are never surfaced to the user. Kleo always responds as one voice.
+const ROUTING_KEYWORDS: Record<string, string[]> = {
   maya: ['tax', 'taxes', 'deduction', 'irs', 'write-off', 'writeoff', '1099', 'w2', 'return', 'taxable', 'withholding', 'refund', 'audit'],
   jordan: ['invest', 'stock', 'portfolio', 'etf', 'market', 'equity', 'share', 'ticker', 'dividend', 'returns', 'nasdaq', 's&p', 'dow', 'fund', 'allocation', 'rebalance'],
-  dante: ['debt', 'loan', 'credit card', 'mortgage', 'interest rate', 'payoff', 'refinance', 'consolidate', 'student loan', 'balance'],
-  zara: ['real estate', 'house', 'home', 'rent', 'buy', 'property', 'mortgage', 'landlord', 'apartment', 'listing', 'zillow', 'investment property'],
-  isla: ['insurance', 'coverage', 'premium', 'deductible', 'life insurance', 'health insurance', 'car insurance', 'home insurance', 'disability'],
+  dante: ['debt', 'loan', 'credit card', 'interest rate', 'payoff', 'refinance', 'consolidate', 'student loan'],
+  zara: ['real estate', 'house', 'home', 'rent', 'buy', 'property', 'landlord', 'apartment', 'investment property'],
+  isla: ['insurance', 'coverage', 'premium', 'deductible', 'life insurance', 'health insurance', 'car insurance', 'disability'],
   felix: ['credit score', 'credit report', 'fico', 'credit card rewards', 'points', 'cashback', 'utilization', 'dispute'],
   nova: ['retirement', '401k', 'ira', 'roth', 'pension', 'social security', 'fire', 'retire', 'nest egg', 'compound'],
-  sage: ['budget', 'spending', 'subscription', 'expenses', 'groceries', 'eating out', 'saving more', 'cash flow', 'monthly'],
+  sage: ['budget', 'spending', 'subscription', 'expenses', 'groceries', 'saving more', 'cash flow', 'monthly'],
   aria: ['estate', 'will', 'trust', 'inheritance', 'beneficiary', 'estate planning', 'legacy', 'probate'],
-  marcus: ['business', 'revenue', 'profit', 'cash flow', 'payroll', 'expenses', 'p&l', 'forecast', 'cfo'],
+  marcus: ['business finances', 'revenue', 'profit', 'payroll', 'p&l', 'forecast', 'business cash flow'],
   cleo: ['business tax', 'llc', 's-corp', 's corp', 'quarterly tax', 'self-employed', 'freelance tax', 'entity'],
   rex: ['startup', 'fundraising', 'investor', 'pitch', 'valuation', 'cap table', 'runway', 'series a', 'vc'],
-  vera: ['pricing', 'price', 'revenue model', 'margin', 'packaging', 'saas pricing', 'subscription price'],
-  knox: ['macro', 'fed', 'inflation', 'recession', 'gdp', 'economy', 'interest rates', 'geopolitical', 'sector rotation'],
+  vera: ['pricing', 'revenue model', 'margin', 'packaging', 'saas pricing'],
+  knox: ['macro', 'fed', 'inflation', 'recession', 'gdp', 'economy', 'interest rates', 'sector rotation'],
   lena: ['options', 'calls', 'puts', 'covered call', 'spread', 'hedge', 'derivatives', 'volatility', 'theta', 'delta'],
   cole: ['crypto', 'bitcoin', 'ethereum', 'defi', 'nft', 'blockchain', 'web3', 'altcoin', 'staking'],
 };
 
-export function routeMessage(message: string, userTier: 'free' | 'pro' | 'elite'): string {
+// Returns the internal specialist id for context — not shown to the user.
+export function routeMessage(message: string): string {
   const lower = message.toLowerCase();
-
-  for (const [agentId, keywords] of Object.entries(ROUTING_KEYWORDS)) {
+  for (const [specialistId, keywords] of Object.entries(ROUTING_KEYWORDS)) {
     for (const kw of keywords) {
-      if (lower.includes(kw)) {
-        const agent = getAgentById(agentId);
-        if (!agent) continue;
-        if (userTier === 'free' && agent.tier !== 'free') return 'alex';
-        if (userTier === 'pro' && agent.tier === 'elite') return 'alex';
-        return agentId;
-      }
+      if (lower.includes(kw)) return specialistId;
     }
   }
-
   return 'alex';
 }

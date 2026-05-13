@@ -3,7 +3,6 @@
 import { X, Plus, LogOut, Settings, Plug } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { User, Conversation } from '@/types';
-import { AGENTS } from '@/lib/agents';
 import { clearStoredUser } from '@/lib/auth';
 import { deleteConversation } from '@/lib/conversations';
 import KleoLogo from './KleoLogo';
@@ -36,7 +35,6 @@ export default function Sidebar({
   onClose,
 }: SidebarProps) {
   const router = useRouter();
-  const personalAgents = AGENTS.filter((a) => a.team === 'personal');
   const tierStyle = TIER_COLORS[user.tier] || TIER_COLORS.free;
 
   function handleSignOut() {
@@ -97,12 +95,7 @@ export default function Sidebar({
         <button
           onClick={() => { onNewConversation(); onClose?.(); }}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all"
-          style={{
-            background: 'rgba(80,90,152,0.09)',
-            color: '#505A98',
-            fontSize: 13,
-            fontWeight: 500,
-          }}
+          style={{ background: 'rgba(80,90,152,0.09)', color: '#505A98', fontSize: 13, fontWeight: 500 }}
           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(80,90,152,0.15)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(80,90,152,0.09)')}
         >
@@ -114,52 +107,7 @@ export default function Sidebar({
       {/* ── Divider ── */}
       <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '0 14px' }} />
 
-      {/* ── Finance Team ── */}
-      <div style={{ padding: '12px 14px 10px' }}>
-        <p
-          style={{
-            fontSize: 10,
-            color: '#888888',
-            textTransform: 'uppercase',
-            letterSpacing: '0.09em',
-            marginBottom: 8,
-          }}
-        >
-          Finance Team
-        </p>
-        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-          {personalAgents.map((agent) => (
-            <div
-              key={agent.id}
-              className="flex flex-col items-center gap-1 flex-shrink-0"
-              title={agent.role}
-            >
-              <div
-                className="flex items-center justify-center rounded-full text-white font-semibold"
-                style={{
-                  width: 30,
-                  height: 30,
-                  fontSize: 12,
-                  background: agent.avatarColor,
-                  opacity: user.tier === 'free' && agent.tier !== 'free' ? 0.32 : 1,
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.18)',
-                  flexShrink: 0,
-                }}
-              >
-                {agent.name[0]}
-              </div>
-              <span style={{ fontSize: 9, color: '#888888', lineHeight: 1.1, textAlign: 'center' }}>
-                {agent.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Divider ── */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '0 14px' }} />
-
-      {/* ── Recents ── */}
+      {/* ── Recents (flex-1, scrollable) ── */}
       <div className="flex-1 overflow-y-auto" style={{ padding: '8px 8px' }}>
         <p
           style={{
@@ -184,10 +132,7 @@ export default function Sidebar({
               key={convo.id}
               onClick={() => { onSelectConversation(convo.id); onClose?.(); }}
               className="group w-full flex items-center gap-1 px-2.5 py-2 rounded-lg text-left transition-all"
-              style={{
-                background: isActive ? 'rgba(80,90,152,0.1)' : 'transparent',
-                marginBottom: 1,
-              }}
+              style={{ background: isActive ? 'rgba(80,90,152,0.1)' : 'transparent', marginBottom: 1 }}
               onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = isActive ? 'rgba(80,90,152,0.1)' : 'transparent'; }}
             >
@@ -219,7 +164,7 @@ export default function Sidebar({
 
       {/* ── Bottom: nav + user ── */}
       <div style={{ padding: '10px 8px 16px' }}>
-        {/* Settings + Integrations row */}
+        {/* Settings + Integrations */}
         <div className="flex gap-1 mb-2">
           <button
             onClick={() => nav('/settings')}
@@ -251,7 +196,6 @@ export default function Sidebar({
           onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
-          {/* Avatar */}
           <div
             className="flex items-center justify-center rounded-full text-white font-semibold flex-shrink-0"
             style={{ width: 28, height: 28, fontSize: 11, background: '#505A98' }}
@@ -259,26 +203,15 @@ export default function Sidebar({
             {user.firstName[0]}{user.lastName[0]}
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p
-              style={{
-                fontSize: 13,
-                fontWeight: 500,
-                color: '#1A1A1A',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user.firstName} {user.lastName}
             </p>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span
-                className="px-1.5 py-0.5 rounded-full"
-                style={{ fontSize: 9, fontWeight: 600, background: tierStyle.bg, color: tierStyle.text, letterSpacing: '0.04em' }}
-              >
-                {user.tier.toUpperCase()}
-              </span>
-            </div>
+            <span
+              className="inline-block px-1.5 py-0.5 rounded-full mt-0.5"
+              style={{ fontSize: 9, fontWeight: 600, background: tierStyle.bg, color: tierStyle.text, letterSpacing: '0.04em' }}
+            >
+              {user.tier.toUpperCase()}
+            </span>
           </div>
           <LogOut size={13} style={{ color: '#AAAAAA', flexShrink: 0 }} />
         </button>
@@ -286,11 +219,8 @@ export default function Sidebar({
     </div>
   );
 
-  if (mode === 'desktop') {
-    return panel;
-  }
+  if (mode === 'desktop') return panel;
 
-  // Mobile overlay
   return (
     <>
       <div

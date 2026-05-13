@@ -4,11 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Menu, Edit3 } from 'lucide-react';
 import InputBar from './InputBar';
 import MessageBubble from './MessageBubble';
-import AgentSelector from './AgentSelector';
-import FinanceTeamSheet from './FinanceTeamSheet';
 import UpgradeModal from './UpgradeModal';
+import KleoLogo from './KleoLogo';
 import { Message, User, Conversation } from '@/types';
-import { routeMessage, getAgentById } from '@/lib/agents';
 import { addMessage, updateConversation } from '@/lib/conversations';
 import { getRemainingMessages, incrementMessageCount } from '@/lib/auth';
 
@@ -31,10 +29,7 @@ export default function ChatInterface({
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(conversation.messages);
   const [streamingContent, setStreamingContent] = useState('');
-  const [streamingAgentId, setStreamingAgentId] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  const [currentAgentId, setCurrentAgentId] = useState(conversation.agentId || 'alex');
-  const [showTeamSheet, setShowTeamSheet] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -42,10 +37,9 @@ export default function ChatInterface({
 
   useEffect(() => {
     setMessages(conversation.messages);
-    setCurrentAgentId(conversation.agentId || 'alex');
   }, [conversation.id]);
 
-  // Auto-send pending first message from home screen
+  // Auto-send the first message passed from home screen
   useEffect(() => {
     const pending = sessionStorage.getItem('kleo_pending_message');
     if (pending && conversation.messages.length === 0) {
@@ -62,18 +56,12 @@ export default function ChatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
 
-  const agent = getAgentById(currentAgentId);
-
   async function handleSendMessage(text: string, attachments?: File[]) {
     const remaining = getRemainingMessages(currentUser);
     if (currentUser.tier === 'free' && remaining <= 0) {
       setShowUpgrade(true);
       return;
     }
-
-    const routedAgentId = routeMessage(text, currentUser.tier);
-    const targetAgentId = currentAgentId !== 'alex' ? currentAgentId : routedAgentId;
-    setCurrentAgentId(targetAgentId);
 
     if (currentUser.tier === 'free') {
       const updated = incrementMessageCount(currentUser);
@@ -106,19 +94,15 @@ export default function ChatInterface({
 
     setIsStreaming(true);
     setStreamingContent('');
-    setStreamingAgentId(targetAgentId);
 
     try {
       abortRef.current = new AbortController();
-      const agentObj = getAgentById(targetAgentId);
 
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: updatedMessages.map((m) => ({ role: m.role, content: m.content })),
-          agentId: targetAgentId,
-          systemPrompt: agentObj?.systemPrompt || '',
           fileContent,
         }),
         signal: abortRef.current.signal,
@@ -133,14 +117,12 @@ export default function ChatInterface({
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split('\n')) {
+        for (const line of decoder.decode(value, { stream: true }).split('\n')) {
           if (line.startsWith('data: ')) {
             const data = line.slice(6).trim();
             if (data === '[DONE]') continue;
             try {
-              const parsed = JSON.parse(data);
-              const t = parsed.text || '';
+              const t = JSON.parse(data).text || '';
               if (t) { full += t; setStreamingContent(full); }
             } catch {}
           }
@@ -151,13 +133,12 @@ export default function ChatInterface({
         id: crypto.randomUUID(),
         role: 'assistant',
         content: full || 'I could not generate a response. Please check your API key.',
-        agentId: targetAgentId,
         timestamp: new Date(),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
       addMessage(currentUser.id, conversation.id, assistantMsg);
-      updateConversation(currentUser.id, conversation.id, { agentId: targetAgentId });
+      updateConversation(currentUser.id, conversation.id, {});
       onConversationsChange();
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') return;
@@ -167,20 +148,14 @@ export default function ChatInterface({
           id: crypto.randomUUID(),
           role: 'assistant',
           content: 'Something went wrong. Please check your API key and try again.',
-          agentId: targetAgentId,
           timestamp: new Date(),
         },
       ]);
     } finally {
       setIsStreaming(false);
       setStreamingContent('');
-      setStreamingAgentId('');
     }
   }
-
-  const inputPlaceholder = agent
-    ? `Ask ${agent.name} about ${agent.role.toLowerCase()}...`
-    : 'Ask me anything about your finances...';
 
   return (
     <div className="flex flex-col h-full" style={{ background: '#F2F1EE' }}>
@@ -188,21 +163,35 @@ export default function ChatInterface({
       <div
         className="flex items-center justify-between flex-shrink-0"
         style={{
-          padding: '10px 14px 10px',
+          padding: '10px 14px',
           borderBottom: '1px solid rgba(0,0,0,0.06)',
           background: '#F2F1EE',
         }}
       >
-        {/* Mobile hamburger / desktop spacer */}
+        {/* Mobile hamburger */}
         <button
           onClick={onOpenMobileSidebar}
-          className="sidebar-hamburger flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          className="sidebar-hamburger items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
         >
           <Menu size={19} style={{ color: '#555' }} />
         </button>
 
-        <AgentSelector agentId={currentAgentId} onOpen={() => setShowTeamSheet(true)} />
+        {/* Kleo identity — center */}
+        <div className="flex items-center gap-2">
+          <KleoLogo size={22} bgColor="#F2F1EE" accentColor="#505A98" />
+          <span
+            style={{
+              fontSize: 15,
+              fontWeight: 600,
+              color: '#1A1A1A',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Kleo
+          </span>
+        </div>
 
+        {/* New conversation */}
         <button
           onClick={onNewConversation}
           className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
@@ -224,7 +213,6 @@ export default function ChatInterface({
               id: 'streaming',
               role: 'assistant',
               content: streamingContent,
-              agentId: streamingAgentId,
               timestamp: new Date(),
             }}
             isStreaming
@@ -254,39 +242,16 @@ export default function ChatInterface({
       </div>
 
       {/* Input bar */}
-      <div
-        className="flex-shrink-0"
-        style={{ padding: '8px 16px 24px', background: '#F2F1EE' }}
-      >
+      <div className="flex-shrink-0" style={{ padding: '8px 16px 24px', background: '#F2F1EE' }}>
         <InputBar
           onSend={handleSendMessage}
-          placeholder={inputPlaceholder}
+          placeholder="Ask Kleo anything about your finances..."
           disabled={isStreaming}
           tier={currentUser.tier}
           messageCount={currentUser.messageCount}
           messageCountDate={currentUser.messageCountDate}
         />
       </div>
-
-      {showTeamSheet && (
-        <FinanceTeamSheet
-          currentAgentId={currentAgentId}
-          userTier={currentUser.tier}
-          onSelectAgent={(id) => {
-            const a = getAgentById(id);
-            if (!a) return;
-            if (currentUser.tier === 'free' && a.tier !== 'free') {
-              setShowTeamSheet(false); setShowUpgrade(true); return;
-            }
-            if (currentUser.tier === 'pro' && a.tier === 'elite') {
-              setShowTeamSheet(false); setShowUpgrade(true); return;
-            }
-            setCurrentAgentId(id);
-            updateConversation(currentUser.id, conversation.id, { agentId: id });
-          }}
-          onClose={() => setShowTeamSheet(false)}
-        />
-      )}
 
       {showUpgrade && (
         <UpgradeModal
