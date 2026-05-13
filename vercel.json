@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pnpm --filter @workspace/kleo run build",
+  "buildCommand": "cd artifacts/kleo && npm run build",
   "outputDirectory": "artifacts/kleo/dist/public",
   "framework": null,
-  "installCommand": "pnpm install"
+  "installCommand": "cd artifacts/kleo && npm install"
 }
