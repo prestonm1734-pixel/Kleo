@@ -9,9 +9,9 @@ import { getStoredUser, updateUser, clearStoredUser } from '@/lib/auth';
 import { User } from '@/types';
 
 const TIER_INFO = {
-  free: { label: 'Free', color: '#888888', bg: 'rgba(0,0,0,0.08)' },
-  pro: { label: 'Pro', color: 'white', bg: '#505A98' },
-  elite: { label: 'Elite', color: 'white', bg: '#1A1A1A' },
+  free: { label: 'Free', color: '#8B8B96', bg: 'rgba(255,255,255,0.08)' },
+  pro: { label: 'Pro', color: 'white', bg: '#7B6FE8' },
+  elite: { label: 'Elite', color: 'white', bg: 'linear-gradient(135deg,#7B6FE8 0%,#5C4FD8 100%)' },
 };
 
 export default function SettingsPage() {
@@ -55,19 +55,19 @@ export default function SettingsPage() {
   const tier = TIER_INFO[user.tier];
 
   return (
-    <div className="flex flex-col min-h-full overflow-y-auto" style={{ background: '#F2F1EE' }}>
+    <div className="flex flex-col min-h-full overflow-y-auto" style={{ background: '#0B0B0F' }}>
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 pt-12 pb-4 sticky top-0 z-10"
-        style={{ background: '#F2F1EE' }}
+        style={{ background: '#0B0B0F' }}
       >
         <button
           onClick={() => router.back()}
-          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/5 transition-colors"
         >
-          <ArrowLeft size={20} style={{ color: '#1A1A1A' }} />
+          <ArrowLeft size={20} style={{ color: '#F2F1EE' }} />
         </button>
-        <h1 style={{ fontSize: 18, fontWeight: 600, color: '#1A1A1A' }}>Settings</h1>
+        <h1 style={{ fontSize: 18, fontWeight: 600, color: '#F2F1EE' }}>Settings</h1>
       </div>
 
       <div className="px-4 pb-16 flex flex-col gap-4 max-w-lg mx-auto w-full">
@@ -77,19 +77,19 @@ export default function SettingsPage() {
           <div className="flex items-center gap-4 mb-4">
             <div
               className="relative flex items-center justify-center rounded-full text-white text-2xl font-semibold"
-              style={{ width: 64, height: 64, background: '#505A98' }}
+              style={{ width: 64, height: 64, background: '#7B6FE8' }}
             >
               {user.firstName[0]}{user.lastName[0]}
               <button
                 className="absolute bottom-0 right-0 flex items-center justify-center w-6 h-6 rounded-full"
-                style={{ background: '#F2F1EE', border: '1px solid rgba(0,0,0,0.1)' }}
+                style={{ background: '#15151B', border: '1px solid rgba(255,255,255,0.1)' }}
               >
-                <Camera size={12} style={{ color: '#888888' }} />
+                <Camera size={12} style={{ color: '#8B8B96' }} />
               </button>
             </div>
             <div>
               <p style={{ fontSize: 16, fontWeight: 600 }}>{user.firstName} {user.lastName}</p>
-              <p style={{ fontSize: 13, color: '#888888' }}>{user.email}</p>
+              <p style={{ fontSize: 13, color: '#8B8B96' }}>{user.email}</p>
             </div>
           </div>
 
@@ -100,26 +100,26 @@ export default function SettingsPage() {
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="First name"
                 className="flex-1 px-4 py-3 rounded-xl text-sm"
-                style={{ background: '#ECEAE4', border: 'none', fontSize: 15, fontFamily: 'Inter', outline: 'none' }}
+                style={{ background: '#1C1C24', border: 'none', fontSize: 15, fontFamily: 'Inter', outline: 'none' }}
               />
               <input
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Last name"
                 className="flex-1 px-4 py-3 rounded-xl text-sm"
-                style={{ background: '#ECEAE4', border: 'none', fontSize: 15, fontFamily: 'Inter', outline: 'none' }}
+                style={{ background: '#1C1C24', border: 'none', fontSize: 15, fontFamily: 'Inter', outline: 'none' }}
               />
             </div>
             <input
               value={email}
               disabled
               className="w-full px-4 py-3 rounded-xl"
-              style={{ background: '#ECEAE4', border: 'none', fontSize: 15, fontFamily: 'Inter', color: '#888888', outline: 'none', cursor: 'not-allowed' }}
+              style={{ background: '#1C1C24', border: 'none', fontSize: 15, fontFamily: 'Inter', color: '#8B8B96', outline: 'none', cursor: 'not-allowed' }}
             />
             <button
               onClick={handleSaveProfile}
               className="py-3 rounded-xl font-medium transition-all hover:opacity-90"
-              style={{ background: saved ? '#3D7A5E' : '#505A98', color: 'white', fontSize: 15 }}
+              style={{ background: saved ? '#3D7A5E' : '#7B6FE8', color: 'white', fontSize: 15 }}
             >
               {saved ? 'Saved ✓' : 'Save Changes'}
             </button>
@@ -140,17 +140,17 @@ export default function SettingsPage() {
                 </span>
               </div>
               {user.tier === 'free' && (
-                <p style={{ fontSize: 13, color: '#888888', marginTop: 4 }}>
+                <p style={{ fontSize: 13, color: '#8B8B96', marginTop: 4 }}>
                   10 messages/day · Alex only
                 </p>
               )}
               {user.tier === 'pro' && (
-                <p style={{ fontSize: 13, color: '#888888', marginTop: 4 }}>
+                <p style={{ fontSize: 13, color: '#8B8B96', marginTop: 4 }}>
                   Unlimited messages · 10 agents
                 </p>
               )}
               {user.tier === 'elite' && (
-                <p style={{ fontSize: 13, color: '#888888', marginTop: 4 }}>
+                <p style={{ fontSize: 13, color: '#8B8B96', marginTop: 4 }}>
                   All 17 agents · Unlimited everything
                 </p>
               )}
@@ -160,14 +160,14 @@ export default function SettingsPage() {
             <button
               onClick={() => setShowUpgrade(true)}
               className="w-full py-3 rounded-xl font-medium hover:opacity-90 transition-all"
-              style={{ background: '#505A98', color: 'white', fontSize: 15 }}
+              style={{ background: '#7B6FE8', color: 'white', fontSize: 15 }}
             >
               {user.tier === 'free' ? 'Upgrade to Pro' : 'Upgrade to Elite'}
             </button>
           )}
           {user.tier !== 'free' && (
             <button
-              className="w-full py-3 rounded-xl font-medium mt-2 hover:bg-black/5 transition-all"
+              className="w-full py-3 rounded-xl font-medium mt-2 hover:bg-white/5 transition-all"
               style={{ color: '#C0392B', fontSize: 14 }}
             >
               Cancel subscription
@@ -207,7 +207,7 @@ export default function SettingsPage() {
               onClick={() => router.push('/integrations')}
             />
             <button
-              className="w-full text-left px-3 py-3 rounded-xl hover:bg-black/5 transition-colors"
+              className="w-full text-left px-3 py-3 rounded-xl hover:bg-white/5 transition-colors"
               style={{ color: '#C0392B', fontSize: 15 }}
             >
               Delete account
@@ -220,14 +220,14 @@ export default function SettingsPage() {
           <div
             className="flex flex-col items-center py-4 text-center"
           >
-            <KleoLogo size={40} bgColor="#F2F1EE" accentColor="#505A98" />
+            <KleoLogo size={40} bgColor="#0B0B0F" accentColor="#7B6FE8" />
             <p style={{ fontSize: 14, fontWeight: 600, marginTop: 8 }}>Kleo</p>
-            <p style={{ fontSize: 12, color: '#888888', marginTop: 2 }}>Version 1.0.0</p>
-            <p style={{ fontSize: 12, color: '#888888', marginTop: 1 }}>Built by Deepmarket</p>
+            <p style={{ fontSize: 12, color: '#8B8B96', marginTop: 2 }}>Version 1.0.0</p>
+            <p style={{ fontSize: 12, color: '#8B8B96', marginTop: 1 }}>Built by Deepmarket</p>
             <p
               style={{
                 fontSize: 13,
-                color: '#888888',
+                color: '#8B8B96',
                 marginTop: 12,
                 lineHeight: 1.5,
                 maxWidth: 260,
@@ -241,8 +241,8 @@ export default function SettingsPage() {
         {/* Sign out */}
         <button
           onClick={handleSignOut}
-          className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl hover:bg-black/5 transition-colors"
-          style={{ color: '#888888', fontSize: 15 }}
+          className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl hover:bg-white/5 transition-colors"
+          style={{ color: '#8B8B96', fontSize: 15 }}
         >
           <LogOut size={17} />
           Sign out
@@ -269,7 +269,7 @@ function Section({ title, children, id }: { title: string; children: React.React
       <p
         style={{
           fontSize: 11,
-          color: '#888888',
+          color: '#8B8B96',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
           marginBottom: 8,
@@ -280,7 +280,7 @@ function Section({ title, children, id }: { title: string; children: React.React
       </p>
       <div
         className="rounded-2xl p-4"
-        style={{ background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+        style={{ background: '#15151B', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'none' }}
       >
         {children}
       </div>
@@ -302,8 +302,8 @@ function ToggleRow({
   return (
     <div className="flex items-center justify-between py-2">
       <div>
-        <p style={{ fontSize: 15, color: '#1A1A1A' }}>{label}</p>
-        <p style={{ fontSize: 12, color: '#888888' }}>{description}</p>
+        <p style={{ fontSize: 15, color: '#F2F1EE' }}>{label}</p>
+        <p style={{ fontSize: 12, color: '#8B8B96' }}>{description}</p>
       </div>
       <button
         onClick={() => onChange(!value)}
@@ -312,7 +312,7 @@ function ToggleRow({
           width: 44,
           height: 26,
           borderRadius: 13,
-          background: value ? '#505A98' : 'rgba(0,0,0,0.15)',
+          background: value ? '#7B6FE8' : 'rgba(255,255,255,0.12)',
           transition: 'background 0.2s',
         }}
       >
@@ -346,10 +346,10 @@ function SettingsRow({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-1 py-2.5 rounded-xl hover:bg-black/5 transition-colors text-left"
+      className="flex items-center gap-3 w-full px-1 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left"
     >
-      <span style={{ color: '#888888' }}>{icon}</span>
-      <span style={{ fontSize: 15, color: '#1A1A1A' }}>{label}</span>
+      <span style={{ color: '#8B8B96' }}>{icon}</span>
+      <span style={{ fontSize: 15, color: '#F2F1EE' }}>{label}</span>
     </button>
   );
 }

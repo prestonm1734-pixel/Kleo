@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
         `}</style>
       </head>
-      <body style={{ fontFamily: 'Inter, sans-serif', background: '#F2F1EE', height: '100dvh', overflow: 'hidden' }}>
+      <body style={{ fontFamily: 'Inter, sans-serif', background: '#0B0B0F', color: '#F2F1EE', height: '100dvh', overflow: 'hidden' }}>
         {children}
       </body>
     </html>

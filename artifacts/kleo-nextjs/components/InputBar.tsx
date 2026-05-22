@@ -72,7 +72,7 @@ export default function InputBar({
         <p
           style={{
             fontSize: 11,
-            color: isLimitReached ? '#C0392B' : '#AAAAAA',
+            color: isLimitReached ? '#FF6B6B' : '#5A5A66',
             textAlign: 'center',
             marginBottom: 6,
           }}
@@ -90,7 +90,7 @@ export default function InputBar({
             <div
               key={i}
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs"
-              style={{ background: '#ECEAE4', color: '#444' }}
+              style={{ background: '#1C1C24', color: '#F2F1EE', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <span className="truncate max-w-[110px]">{f.name}</span>
               <button
@@ -108,17 +108,17 @@ export default function InputBar({
       <div
         className="input-bar-focus flex items-end gap-2 rounded-2xl px-4 py-3.5"
         style={{
-          background: '#ECEAE4',
-          border: '1.5px solid rgba(0,0,0,0.08)',
+          background: '#15151B',
+          border: '1.5px solid rgba(255,255,255,0.06)',
           transition: 'border-color 0.15s, box-shadow 0.15s',
         }}
       >
         {/* Paperclip */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex-shrink-0 opacity-40 hover:opacity-70 transition-opacity mb-0.5"
+          className="flex-shrink-0 opacity-50 hover:opacity-90 transition-opacity mb-0.5"
           type="button"
-          style={{ color: '#333' }}
+          style={{ color: '#8B8B96' }}
         >
           <Paperclip size={18} />
         </button>
@@ -140,10 +140,10 @@ export default function InputBar({
           placeholder={isLimitReached ? 'Upgrade to send more messages' : placeholder}
           disabled={disabled || isLimitReached}
           rows={1}
-          className="flex-1 resize-none bg-transparent leading-relaxed"
+          className="flex-1 resize-none bg-transparent leading-relaxed placeholder:text-[#5A5A66]"
           style={{
             fontSize: 15,
-            color: '#1A1A1A',
+            color: '#F2F1EE',
             fontFamily: 'Inter, sans-serif',
             outline: 'none',
             border: 'none',
@@ -158,8 +158,8 @@ export default function InputBar({
           disabled={!canSend}
           className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all mb-0.5"
           style={{
-            background: canSend ? '#505A98' : 'rgba(0,0,0,0.1)',
-            color: canSend ? 'white' : 'rgba(0,0,0,0.25)',
+            background: canSend ? '#7B6FE8' : 'rgba(255,255,255,0.08)',
+            color: canSend ? 'white' : 'rgba(255,255,255,0.25)',
           }}
           type="button"
         >

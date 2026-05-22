@@ -97,19 +97,19 @@ export default function IntegrationsPage() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-full overflow-y-auto" style={{ background: '#F2F1EE' }}>
+    <div className="flex flex-col min-h-full overflow-y-auto" style={{ background: '#0B0B0F' }}>
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 pt-12 pb-4 sticky top-0 z-10"
-        style={{ background: '#F2F1EE' }}
+        style={{ background: '#0B0B0F' }}
       >
         <button
           onClick={() => router.back()}
-          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-white/5 transition-colors"
         >
-          <ArrowLeft size={20} style={{ color: '#1A1A1A' }} />
+          <ArrowLeft size={20} style={{ color: '#F2F1EE' }} />
         </button>
-        <h1 style={{ fontSize: 18, fontWeight: 600, color: '#1A1A1A' }}>Integrations</h1>
+        <h1 style={{ fontSize: 18, fontWeight: 600, color: '#F2F1EE' }}>Integrations</h1>
       </div>
 
       <div className="px-4 pb-16 max-w-lg mx-auto w-full">
@@ -121,7 +121,7 @@ export default function IntegrationsPage() {
               <p
                 style={{
                   fontSize: 11,
-                  color: '#888888',
+                  color: '#8B8B96',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
                   marginBottom: 8,
@@ -139,9 +139,9 @@ export default function IntegrationsPage() {
                       key={integration.id}
                       className="rounded-2xl p-4"
                       style={{
-                        background: 'white',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                        opacity: locked ? 0.7 : 1,
+                        background: '#15151B',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        opacity: locked ? 0.6 : 1,
                       }}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -153,15 +153,15 @@ export default function IntegrationsPage() {
                               {locked && (
                                 <span
                                   className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs"
-                                  style={{ background: 'rgba(0,0,0,0.06)', color: '#888888' }}
+                                  style={{ background: 'rgba(255,255,255,0.06)', color: '#8B8B96' }}
                                 >
                                   <Lock size={9} />
                                   {integration.tier === 'elite' ? ' Elite' : ' Pro'}
                                 </span>
                               )}
                             </div>
-                            <p style={{ fontSize: 12, color: '#888888', marginTop: 1 }}>{integration.reads}</p>
-                            <p style={{ fontSize: 11, color: '#505A98', marginTop: 2 }}>
+                            <p style={{ fontSize: 12, color: '#8B8B96', marginTop: 1 }}>{integration.reads}</p>
+                            <p style={{ fontSize: 11, color: '#9D8FFF', marginTop: 2 }}>
                               Powers: {integration.powers}
                             </p>
                           </div>
@@ -172,11 +172,11 @@ export default function IntegrationsPage() {
                           className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
                           style={{
                             background: isConnected
-                              ? 'rgba(61,122,94,0.1)'
+                              ? 'rgba(111,207,151,0.14)'
                               : locked
-                              ? 'rgba(0,0,0,0.06)'
-                              : 'rgba(80,90,152,0.1)',
-                            color: isConnected ? '#3D7A5E' : locked ? '#AAAAAA' : '#505A98',
+                              ? 'rgba(255,255,255,0.05)'
+                              : 'rgba(123,111,232,0.16)',
+                            color: isConnected ? '#6FCF97' : locked ? '#5A5A66' : '#9D8FFF',
                             cursor: locked ? 'not-allowed' : 'pointer',
                           }}
                         >
@@ -202,9 +202,9 @@ export default function IntegrationsPage() {
         {/* Privacy note */}
         <div
           className="mt-2 p-4 rounded-2xl text-center"
-          style={{ background: 'rgba(80,90,152,0.06)' }}
+          style={{ background: 'rgba(123,111,232,0.08)', border: '1px solid rgba(123,111,232,0.14)' }}
         >
-          <p style={{ fontSize: 12, color: '#888888', lineHeight: 1.6 }}>
+          <p style={{ fontSize: 12, color: '#8B8B96', lineHeight: 1.6 }}>
             🔒 Kleo never sells or shares your data. All connections are read-only. Disconnect any time.
           </p>
         </div>

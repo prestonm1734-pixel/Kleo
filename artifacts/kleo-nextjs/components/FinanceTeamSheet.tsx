@@ -33,10 +33,10 @@ function AgentCard({
       onClick={isLocked ? undefined : onSelect}
       className="w-full flex items-start gap-3 p-3 rounded-2xl text-left transition-all"
       style={{
-        border: isActive ? '1.5px solid #505A98' : '1.5px solid transparent',
+        border: isActive ? '1.5px solid #7B6FE8' : '1.5px solid transparent',
         opacity: isLocked ? 0.6 : 1,
         cursor: isLocked ? 'default' : 'pointer',
-        background: isActive ? 'rgba(80,90,152,0.05)' : 'transparent',
+        background: isActive ? 'rgba(123,111,232,0.10)' : 'transparent',
       }}
     >
       {/* Avatar */}
@@ -55,22 +55,22 @@ function AgentCard({
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span style={{ fontSize: 16, fontWeight: 600, color: '#1A1A1A' }}>
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#F2F1EE' }}>
             {agent.name}
           </span>
           {isLocked && (
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
-              style={{ background: 'rgba(0,0,0,0.08)', color: '#888888' }}>
+              style={{ background: 'rgba(255,255,255,0.08)', color: '#8B8B96' }}>
               <Lock size={10} />
               <span>{agent.tier === 'elite' ? 'Elite' : 'Pro'}</span>
             </div>
           )}
         </div>
-        <p style={{ fontSize: 13, color: '#888888', marginTop: 1 }}>{agent.role}</p>
+        <p style={{ fontSize: 13, color: '#8B8B96', marginTop: 1 }}>{agent.role}</p>
         <p
           style={{
             fontSize: 12,
-            color: '#888888',
+            color: '#8B8B96',
             marginTop: 2,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -111,7 +111,7 @@ export default function FinanceTeamSheet({
       <div
         className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up"
         style={{
-          background: '#FFFFFF',
+          background: '#15151B',
           borderRadius: '24px 24px 0 0',
           maxHeight: '85vh',
           display: 'flex',
@@ -120,17 +120,17 @@ export default function FinanceTeamSheet({
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.15)' }} />
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.15)' }} />
         </div>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3">
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#1A1A1A' }}>Finance Team</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#F2F1EE' }}>Finance Team</h2>
           <button
             onClick={onClose}
-            className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/5 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/5 transition-colors"
           >
-            <X size={18} style={{ color: '#888888' }} />
+            <X size={18} style={{ color: '#8B8B96' }} />
           </button>
         </div>
 
@@ -145,7 +145,7 @@ export default function FinanceTeamSheet({
                   style={{
                     fontSize: 10,
                     fontWeight: 500,
-                    color: '#888888',
+                    color: '#8B8B96',
                     textTransform: 'uppercase',
                     letterSpacing: '0.08em',
                   }}

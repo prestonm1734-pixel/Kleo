@@ -15,7 +15,7 @@ export default function AgentSelector({ agentId, onOpen }: AgentSelectorProps) {
   return (
     <button
       onClick={onOpen}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all hover:bg-black/5"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all hover:bg-white/5"
       style={{ fontFamily: 'Inter, sans-serif' }}
     >
       <span
@@ -28,12 +28,12 @@ export default function AgentSelector({ agentId, onOpen }: AgentSelectorProps) {
           flexShrink: 0,
         }}
       />
-      <span style={{ fontSize: 15, fontWeight: 500, color: '#1A1A1A' }}>
+      <span style={{ fontSize: 15, fontWeight: 500, color: '#F2F1EE' }}>
         {agent.name}
       </span>
-      <span style={{ fontSize: 15, color: '#888888' }}>·</span>
-      <span style={{ fontSize: 15, color: '#888888' }}>{agent.role}</span>
-      <ChevronDown size={15} style={{ color: '#888888', marginLeft: 2 }} />
+      <span style={{ fontSize: 15, color: '#8B8B96' }}>·</span>
+      <span style={{ fontSize: 15, color: '#8B8B96' }}>{agent.role}</span>
+      <ChevronDown size={15} style={{ color: '#8B8B96', marginLeft: 2 }} />
     </button>
   );
 }

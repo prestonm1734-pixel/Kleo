@@ -6,7 +6,9 @@ import InputBar from './InputBar';
 import MessageBubble from './MessageBubble';
 import UpgradeModal from './UpgradeModal';
 import KleoLogo from './KleoLogo';
-import { Message, User, Conversation } from '@/types';
+import LucaTerminal from './LucaTerminal';
+import LucaFindingCard from './LucaFindingCard';
+import { Message, User, Conversation, LucaSession } from '@/types';
 import { addMessage, updateConversation } from '@/lib/conversations';
 import { getRemainingMessages, incrementMessageCount } from '@/lib/auth';
 
@@ -17,6 +19,7 @@ interface ChatInterfaceProps {
   onConversationsChange: () => void;
   onUserChange: (user: User) => void;
   onOpenMobileSidebar: () => void;
+  lucaSession?: LucaSession | null;
 }
 
 export default function ChatInterface({
@@ -26,6 +29,7 @@ export default function ChatInterface({
   onConversationsChange,
   onUserChange,
   onOpenMobileSidebar,
+  lucaSession,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>(conversation.messages);
   const [streamingContent, setStreamingContent] = useState('');
@@ -54,7 +58,7 @@ export default function ChatInterface({
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streamingContent]);
+  }, [messages, streamingContent, lucaSession?.steps.length, lucaSession?.findings.length]);
 
   async function handleSendMessage(text: string, attachments?: File[]) {
     const remaining = getRemainingMessages(currentUser);
@@ -157,33 +161,37 @@ export default function ChatInterface({
     }
   }
 
+  const showLucaTerminal = !!lucaSession;
+  const showLucaFindings = lucaSession?.status === 'complete' && lucaSession.findings.length > 0;
+
   return (
-    <div className="flex flex-col h-full" style={{ background: '#F2F1EE' }}>
+    <div className="flex flex-col h-full" style={{ background: '#0B0B0F' }}>
       {/* Top bar */}
       <div
         className="flex items-center justify-between flex-shrink-0"
         style={{
           padding: '10px 14px',
-          borderBottom: '1px solid rgba(0,0,0,0.06)',
-          background: '#F2F1EE',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: '#0B0B0F',
         }}
       >
-        {/* Mobile hamburger */}
         <button
           onClick={onOpenMobileSidebar}
-          className="sidebar-hamburger items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          className="sidebar-hamburger items-center justify-center w-9 h-9 rounded-full transition-colors"
+          style={{ color: '#8B8B96' }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
-          <Menu size={19} style={{ color: '#555' }} />
+          <Menu size={19} />
         </button>
 
-        {/* Kleo identity — center */}
         <div className="flex items-center gap-2">
-          <KleoLogo size={22} bgColor="#F2F1EE" accentColor="#505A98" />
+          <KleoLogo size={22} bgColor="#0B0B0F" accentColor="#9D8FFF" />
           <span
             style={{
               fontSize: 15,
               fontWeight: 600,
-              color: '#1A1A1A',
+              color: '#F2F1EE',
               letterSpacing: '-0.01em',
             }}
           >
@@ -191,18 +199,50 @@ export default function ChatInterface({
           </span>
         </div>
 
-        {/* New conversation */}
         <button
           onClick={onNewConversation}
-          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-black/5 transition-colors"
+          className="flex items-center justify-center w-9 h-9 rounded-full transition-colors"
+          style={{ color: '#8B8B96' }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           title="New conversation"
         >
-          <Edit3 size={17} style={{ color: '#555' }} />
+          <Edit3 size={17} />
         </button>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto" style={{ paddingTop: 16, paddingBottom: 8 }}>
+        {/* Luca live terminal */}
+        {showLucaTerminal && (
+          <div style={{ padding: '0 20px' }}>
+            <LucaTerminal session={lucaSession ?? null} />
+          </div>
+        )}
+
+        {/* Luca findings cards (after complete) */}
+        {showLucaFindings && (
+          <div style={{ padding: '0 20px 12px' }}>
+            <p
+              style={{
+                maxWidth: 720,
+                margin: '0 auto 10px',
+                fontSize: 11,
+                color: '#9D8FFF',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                paddingTop: 6,
+              }}
+            >
+              ✦ {lucaSession!.findings.length} actions ready · ${lucaSession!.totalValue.toFixed(0)} identified
+            </p>
+            {lucaSession!.findings.map((f, i) => (
+              <LucaFindingCard key={f.id} finding={f} index={i} />
+            ))}
+          </div>
+        )}
+
         {messages.map((msg, i) => (
           <MessageBubble key={msg.id || i} message={msg} isStreaming={false} />
         ))}
@@ -229,7 +269,7 @@ export default function ChatInterface({
                   style={{
                     width: 7,
                     height: 7,
-                    background: '#BBBBBB',
+                    background: '#5A5A66',
                     animation: `blink 1.2s ease-in-out ${i * 0.2}s infinite`,
                   }}
                 />
@@ -242,7 +282,7 @@ export default function ChatInterface({
       </div>
 
       {/* Input bar */}
-      <div className="flex-shrink-0" style={{ padding: '8px 16px 24px', background: '#F2F1EE' }}>
+      <div className="flex-shrink-0" style={{ padding: '8px 16px 24px', background: '#0B0B0F' }}>
         <InputBar
           onSend={handleSendMessage}
           placeholder="Ask Kleo anything about your finances..."

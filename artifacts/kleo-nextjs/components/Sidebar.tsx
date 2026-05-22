@@ -2,10 +2,11 @@
 
 import { X, Plus, LogOut, Settings, Plug, BarChart3 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { User, Conversation } from '@/types';
+import { User, Conversation, LucaSession } from '@/types';
 import { clearStoredUser } from '@/lib/auth';
 import { deleteConversation } from '@/lib/conversations';
 import KleoLogo from './KleoLogo';
+import LucaMissionLog from './LucaMissionLog';
 
 interface SidebarProps {
   mode: 'desktop' | 'mobile-overlay';
@@ -16,12 +17,17 @@ interface SidebarProps {
   onNewConversation: () => void;
   onConversationsChange: () => void;
   onClose?: () => void;
+  // Luca
+  lucaIsRunning?: boolean;
+  lucaPastSessions?: LucaSession[];
+  onRunLuca?: () => void;
+  onOpenLucaLog?: () => void;
 }
 
 const TIER_COLORS: Record<string, { bg: string; text: string }> = {
-  free:  { bg: 'rgba(0,0,0,0.08)',  text: '#888888' },
-  pro:   { bg: '#505A98',           text: 'white'   },
-  elite: { bg: '#1A1A1A',           text: 'white'   },
+  free:  { bg: 'rgba(255,255,255,0.08)', text: '#8B8B96' },
+  pro:   { bg: '#7B6FE8',                text: 'white'   },
+  elite: { bg: 'linear-gradient(135deg,#7B6FE8 0%, #5C4FD8 100%)', text: 'white' },
 };
 
 export default function Sidebar({
@@ -33,6 +39,10 @@ export default function Sidebar({
   onNewConversation,
   onConversationsChange,
   onClose,
+  lucaIsRunning = false,
+  lucaPastSessions = [],
+  onRunLuca,
+  onOpenLucaLog,
 }: SidebarProps) {
   const router = useRouter();
   const tierStyle = TIER_COLORS[user.tier] || TIER_COLORS.free;
@@ -57,10 +67,10 @@ export default function Sidebar({
     <div
       className="flex flex-col h-full"
       style={{
-        width: mode === 'desktop' ? 260 : '80vw',
-        maxWidth: mode === 'desktop' ? 260 : 300,
-        background: '#E8E6E0',
-        borderRight: mode === 'desktop' ? '1px solid rgba(0,0,0,0.07)' : 'none',
+        width: mode === 'desktop' ? 272 : '80vw',
+        maxWidth: mode === 'desktop' ? 272 : 320,
+        background: '#0F0F14',
+        borderRight: mode === 'desktop' ? '1px solid rgba(255,255,255,0.06)' : 'none',
         flexShrink: 0,
       }}
     >
@@ -68,13 +78,13 @@ export default function Sidebar({
       <div style={{ padding: mode === 'desktop' ? '20px 14px 14px' : '52px 14px 14px' }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <KleoLogo size={26} bgColor="#E8E6E0" accentColor="#505A98" interactive />
+            <KleoLogo size={26} bgColor="#0F0F14" accentColor="#9D8FFF" interactive />
             <span
               style={{
                 fontSize: 13,
                 fontWeight: 600,
                 letterSpacing: '0.14em',
-                color: '#1A1A1A',
+                color: '#F2F1EE',
                 textTransform: 'uppercase',
               }}
             >
@@ -84,9 +94,12 @@ export default function Sidebar({
           {mode === 'mobile-overlay' && (
             <button
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-black/10 transition-colors"
+              className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
+              style={{ color: '#8B8B96' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              <X size={17} style={{ color: '#555' }} />
+              <X size={17} />
             </button>
           )}
         </div>
@@ -95,33 +108,47 @@ export default function Sidebar({
         <button
           onClick={() => { onNewConversation(); onClose?.(); }}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all"
-          style={{ background: 'rgba(80,90,152,0.09)', color: '#505A98', fontSize: 13, fontWeight: 500 }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(80,90,152,0.15)')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(80,90,152,0.09)')}
+          style={{ background: 'rgba(123,111,232,0.12)', color: '#9D8FFF', fontSize: 13, fontWeight: 500 }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(123,111,232,0.22)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(123,111,232,0.12)')}
         >
           <Plus size={15} />
           New conversation
         </button>
       </div>
 
+      {/* ── Luca mission log ── */}
+      {onRunLuca && (
+        <>
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', margin: '0 14px' }} />
+          <LucaMissionLog
+            userId={user.id}
+            pastSessions={lucaPastSessions}
+            isRunning={lucaIsRunning}
+            onRun={() => { onRunLuca?.(); onClose?.(); }}
+            onOpenSession={() => { onOpenLucaLog?.(); onClose?.(); }}
+          />
+        </>
+      )}
+
       {/* ── Divider ── */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '0 14px' }} />
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', margin: '0 14px' }} />
 
       {/* ── Recents (flex-1, scrollable) ── */}
       <div className="flex-1 overflow-y-auto" style={{ padding: '8px 8px' }}>
         <p
           style={{
             fontSize: 10,
-            color: '#888888',
+            color: '#5A5A66',
             textTransform: 'uppercase',
-            letterSpacing: '0.09em',
+            letterSpacing: '0.12em',
             padding: '4px 8px 6px',
           }}
         >
           Recents
         </p>
         {conversations.length === 0 && (
-          <p style={{ fontSize: 12, color: '#AAAAAA', padding: '4px 10px' }}>
+          <p style={{ fontSize: 12, color: '#5A5A66', padding: '4px 10px' }}>
             No conversations yet
           </p>
         )}
@@ -132,14 +159,14 @@ export default function Sidebar({
               key={convo.id}
               onClick={() => { onSelectConversation(convo.id); onClose?.(); }}
               className="group w-full flex items-center gap-1 px-2.5 py-2 rounded-lg text-left transition-all"
-              style={{ background: isActive ? 'rgba(80,90,152,0.1)' : 'transparent', marginBottom: 1 }}
-              onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = isActive ? 'rgba(80,90,152,0.1)' : 'transparent'; }}
+              style={{ background: isActive ? 'rgba(123,111,232,0.16)' : 'transparent', marginBottom: 1 }}
+              onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = isActive ? 'rgba(123,111,232,0.16)' : 'transparent'; }}
             >
               <span
                 style={{
                   fontSize: 13,
-                  color: isActive ? '#505A98' : '#1A1A1A',
+                  color: isActive ? '#9D8FFF' : '#F2F1EE',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
@@ -152,7 +179,7 @@ export default function Sidebar({
                 onClick={(e) => handleDeleteConversation(e, convo.id)}
                 className="opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity flex-shrink-0 p-0.5 rounded"
               >
-                <X size={12} style={{ color: '#888888' }} />
+                <X size={12} style={{ color: '#8B8B96' }} />
               </button>
             </button>
           );
@@ -160,7 +187,7 @@ export default function Sidebar({
       </div>
 
       {/* ── Divider ── */}
-      <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', margin: '0 14px' }} />
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', margin: '0 14px' }} />
 
       {/* ── Bottom: nav + user ── */}
       <div style={{ padding: '10px 8px 16px' }}>
@@ -170,21 +197,21 @@ export default function Sidebar({
             onClick={() => nav('/business-intelligence')}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all mb-2"
             style={{
-              background: '#1A1A1A',
-              color: 'white',
+              background: 'rgba(255,255,255,0.04)',
+              color: '#F2F1EE',
+              border: '1px solid rgba(255,255,255,0.06)',
               fontSize: 12.5,
               fontWeight: 500,
-              letterSpacing: '0.01em',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#2C2C2C')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#1A1A1A')}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
           >
-            <BarChart3 size={14} />
+            <BarChart3 size={14} style={{ color: '#9D8FFF' }} />
             <span style={{ flex: 1, textAlign: 'left' }}>Business Intelligence</span>
             <span style={{
               fontSize: 8.5, padding: '2px 6px', borderRadius: 999,
-              background: 'rgba(255,255,255,0.14)', letterSpacing: '0.08em',
-              fontWeight: 600,
+              background: 'rgba(123,111,232,0.2)', letterSpacing: '0.08em',
+              fontWeight: 600, color: '#9D8FFF',
             }}>ELITE</span>
           </button>
         )}
@@ -194,8 +221,8 @@ export default function Sidebar({
           <button
             onClick={() => nav('/settings')}
             className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg transition-all"
-            style={{ fontSize: 12, color: '#555' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+            style={{ fontSize: 12, color: '#8B8B96' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
             <Settings size={13} />
@@ -204,8 +231,8 @@ export default function Sidebar({
           <button
             onClick={() => nav('/integrations')}
             className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg transition-all"
-            style={{ fontSize: 12, color: '#555' }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+            style={{ fontSize: 12, color: '#8B8B96' }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
           >
             <Plug size={13} />
@@ -218,17 +245,17 @@ export default function Sidebar({
           onClick={handleSignOut}
           title="Sign out"
           className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all"
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
           onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
         >
           <div
             className="flex items-center justify-center rounded-full text-white font-semibold flex-shrink-0"
-            style={{ width: 28, height: 28, fontSize: 11, background: '#505A98' }}
+            style={{ width: 28, height: 28, fontSize: 11, background: '#7B6FE8' }}
           >
             {user.firstName[0]}{user.lastName[0]}
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p style={{ fontSize: 13, fontWeight: 500, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: '#F2F1EE', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {user.firstName} {user.lastName}
             </p>
             <span
@@ -238,7 +265,7 @@ export default function Sidebar({
               {user.tier.toUpperCase()}
             </span>
           </div>
-          <LogOut size={13} style={{ color: '#AAAAAA', flexShrink: 0 }} />
+          <LogOut size={13} style={{ color: '#5A5A66', flexShrink: 0 }} />
         </button>
       </div>
     </div>
@@ -250,7 +277,7 @@ export default function Sidebar({
     <>
       <div
         className="fixed inset-0 z-40"
-        style={{ background: 'rgba(0,0,0,0.35)' }}
+        style={{ background: 'rgba(0,0,0,0.55)' }}
         onClick={onClose}
       />
       <div className="fixed left-0 top-0 bottom-0 z-50 animate-slide-in-left">

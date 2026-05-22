@@ -35,18 +35,18 @@ export default function SignupPage() {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-full px-6 overflow-y-auto py-8"
-      style={{ background: '#F2F1EE' }}
+      style={{ background: '#0B0B0F' }}
     >
       <div className="w-full max-w-sm">
         {/* Logo & brand */}
         <div className="flex flex-col items-center mb-8">
-          <KleoLogo size={56} bgColor="#F2F1EE" accentColor="#505A98" />
+          <KleoLogo size={56} bgColor="#0B0B0F" accentColor="#7B6FE8" />
           <p
             style={{
               fontSize: 11,
               fontWeight: 300,
               letterSpacing: '0.5em',
-              color: '#888888',
+              color: '#8B8B96',
               textTransform: 'uppercase',
               marginTop: 12,
             }}
@@ -57,14 +57,14 @@ export default function SignupPage() {
             style={{
               fontSize: 22,
               fontWeight: 600,
-              color: '#1A1A1A',
+              color: '#F2F1EE',
               marginTop: 8,
               textAlign: 'center',
             }}
           >
             Create your account
           </h1>
-          <p style={{ fontSize: 14, color: '#888888', marginTop: 4, textAlign: 'center' }}>
+          <p style={{ fontSize: 14, color: '#8B8B96', marginTop: 4, textAlign: 'center' }}>
             Free to start. No credit card required.
           </p>
         </div>
@@ -80,9 +80,9 @@ export default function SignupPage() {
               required
               className="flex-1 px-4 py-3.5 rounded-2xl"
               style={{
-                background: '#ECEAE4',
-                border: '1px solid rgba(0,0,0,0.06)',
-                color: '#1A1A1A',
+                background: '#15151B',
+                border: '1px solid rgba(255,255,255,0.06)',
+                color: '#F2F1EE',
                 fontSize: 15,
                 fontFamily: 'Inter, sans-serif',
                 outline: 'none',
@@ -96,9 +96,9 @@ export default function SignupPage() {
               required
               className="flex-1 px-4 py-3.5 rounded-2xl"
               style={{
-                background: '#ECEAE4',
-                border: '1px solid rgba(0,0,0,0.06)',
-                color: '#1A1A1A',
+                background: '#15151B',
+                border: '1px solid rgba(255,255,255,0.06)',
+                color: '#F2F1EE',
                 fontSize: 15,
                 fontFamily: 'Inter, sans-serif',
                 outline: 'none',
@@ -113,9 +113,9 @@ export default function SignupPage() {
             required
             className="w-full px-4 py-3.5 rounded-2xl"
             style={{
-              background: '#ECEAE4',
-              border: '1px solid rgba(0,0,0,0.06)',
-              color: '#1A1A1A',
+              background: '#15151B',
+              border: '1px solid rgba(255,255,255,0.06)',
+              color: '#F2F1EE',
               fontSize: 15,
               fontFamily: 'Inter, sans-serif',
               outline: 'none',
@@ -129,9 +129,9 @@ export default function SignupPage() {
             required
             className="w-full px-4 py-3.5 rounded-2xl"
             style={{
-              background: '#ECEAE4',
-              border: '1px solid rgba(0,0,0,0.06)',
-              color: '#1A1A1A',
+              background: '#15151B',
+              border: '1px solid rgba(255,255,255,0.06)',
+              color: '#F2F1EE',
               fontSize: 15,
               fontFamily: 'Inter, sans-serif',
               outline: 'none',
@@ -139,14 +139,14 @@ export default function SignupPage() {
           />
 
           {error && (
-            <p style={{ fontSize: 13, color: '#C0392B', textAlign: 'center' }}>{error}</p>
+            <p style={{ fontSize: 13, color: '#FF6B6B', textAlign: 'center' }}>{error}</p>
           )}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full py-4 rounded-2xl text-white font-semibold text-base mt-2 transition-all hover:opacity-90 disabled:opacity-60"
-            style={{ background: '#505A98' }}
+            style={{ background: '#7B6FE8' }}
           >
             {loading ? 'Creating account...' : 'Create Account — Free'}
           </button>
@@ -156,7 +156,7 @@ export default function SignupPage() {
         <p
           style={{
             fontSize: 11,
-            color: '#AAAAAA',
+            color: '#5A5A66',
             textAlign: 'center',
             marginTop: 16,
             lineHeight: 1.5,
@@ -167,11 +167,11 @@ export default function SignupPage() {
 
         {/* Sign in link */}
         <div className="text-center mt-6">
-          <p style={{ fontSize: 14, color: '#888888' }}>
+          <p style={{ fontSize: 14, color: '#8B8B96' }}>
             Already have an account?{' '}
             <Link
               href="/login"
-              style={{ color: '#505A98', fontWeight: 500, textDecoration: 'none' }}
+              style={{ color: '#7B6FE8', fontWeight: 500, textDecoration: 'none' }}
             >
               Sign in
             </Link>
@@ -181,7 +181,7 @@ export default function SignupPage() {
         <p
           style={{
             fontSize: 11,
-            color: '#AAAAAA',
+            color: '#5A5A66',
             textAlign: 'center',
             marginTop: 32,
           }}

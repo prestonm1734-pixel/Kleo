@@ -45,3 +45,54 @@ export interface Agent {
   tier: 'free' | 'pro' | 'elite';
   team: 'personal' | 'business' | 'markets';
 }
+
+/* ── Luca: autonomous background agent ─────────────────────── */
+
+export type LucaStepType =
+  | 'connecting'
+  | 'reading'
+  | 'analyzing'
+  | 'found'
+  | 'complete'
+  | 'error';
+
+export interface LucaStep {
+  id: string;
+  type: LucaStepType;
+  message: string;
+  timestamp: number;
+  findingId?: string;
+}
+
+export type LucaFindingKind =
+  | 'fee_dispute'
+  | 'cancel_subscription'
+  | 'tax_match'
+  | 'savings_arbitrage'
+  | 'refinance'
+  | 'duplicate_charge';
+
+export interface LucaFinding {
+  id: string;
+  kind: LucaFindingKind;
+  title: string;
+  detail: string;
+  amount: number;      // dollars saved / recovered (annualized for recurring)
+  source: string;      // e.g. "Chase ··· 4521"
+  action: {
+    label: string;     // primary CTA, e.g. "Generate dispute letter"
+    href?: string;     // optional external URL
+  };
+  evidence?: string;   // short string for the modal
+}
+
+export interface LucaSession {
+  id: string;
+  userId: string;
+  startedAt: number;
+  completedAt?: number;
+  steps: LucaStep[];
+  findings: LucaFinding[];
+  status: 'running' | 'complete' | 'error';
+  totalValue: number;  // sum of finding amounts
+}

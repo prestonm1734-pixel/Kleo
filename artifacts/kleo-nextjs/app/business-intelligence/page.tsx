@@ -38,8 +38,8 @@ const baseKPIs: KPI[] = [
 ];
 
 const incomeStreams = [
-  { name: 'Recurring revenue (SaaS)', amount: 184250, color: '#505A98', portion: 0 },
-  { name: 'Services / consulting',    amount: 42100,  color: '#3D7A5E', portion: 0 },
+  { name: 'Recurring revenue (SaaS)', amount: 184250, color: '#7B6FE8', portion: 0 },
+  { name: 'Services / consulting',    amount: 42100,  color: '#6FCF97', portion: 0 },
   { name: 'Investment dividends',     amount: 8920,   color: '#16A085', portion: 0 },
   { name: 'Rental income',            amount: 5400,   color: '#8B5E3C', portion: 0 },
   { name: 'Capital gains (realized)', amount: 3120,   color: '#9B59B6', portion: 0 },
@@ -102,17 +102,17 @@ export default function BusinessIntelligencePage() {
   /* ── Locked state ─────────────────────────── */
   if (locked) {
     return (
-      <div style={{ minHeight: '100vh', background: '#E8E6E0', padding: '32px 20px' }}>
+      <div style={{ minHeight: '100vh', background: '#0B0B0F', padding: '32px 20px' }}>
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
           <button
             onClick={() => router.back()}
             className="flex items-center gap-2 mb-8 text-sm"
-            style={{ color: '#555' }}
+            style={{ color: '#8B8B96' }}
           >
             <ArrowLeft size={16} /> Back
           </button>
 
-          <div style={{ background: '#1A1A1A', borderRadius: 24, padding: 40, color: 'white' }}>
+          <div style={{ background: '#15151B', borderRadius: 24, padding: 40, color: '#F2F1EE', border: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="flex items-center gap-2 mb-4" style={{ opacity: 0.75 }}>
               <Lock size={14} /> <span style={{ fontSize: 11, letterSpacing: '0.16em' }}>ELITE</span>
             </div>
@@ -128,7 +128,7 @@ export default function BusinessIntelligencePage() {
             <button
               onClick={() => router.push('/settings')}
               style={{
-                background: 'white', color: '#1A1A1A',
+                background: '#15151B', color: '#F2F1EE',
                 borderRadius: 999, padding: '12px 22px',
                 fontSize: 14, fontWeight: 600,
               }}
@@ -143,23 +143,23 @@ export default function BusinessIntelligencePage() {
 
   /* ── Elite experience ────────────────────── */
   return (
-    <div style={{ minHeight: '100vh', background: '#E8E6E0' }}>
+    <div style={{ minHeight: '100vh', background: '#0B0B0F' }}>
       {/* Header */}
       <div style={{
-        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
         padding: '14px 20px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        background: '#E8E6E0', position: 'sticky', top: 0, zIndex: 10,
+        background: '#0B0B0F', position: 'sticky', top: 0, zIndex: 10,
       }}>
         <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} style={{ color: '#555' }} aria-label="Back">
+          <button onClick={() => router.back()} style={{ color: '#8B8B96' }} aria-label="Back">
             <ArrowLeft size={18} />
           </button>
           <div>
-            <p style={{ fontSize: 10, letterSpacing: '0.16em', color: '#888' }}>
+            <p style={{ fontSize: 10, letterSpacing: '0.16em', color: '#8B8B96' }}>
               ELITE · BUSINESS INTELLIGENCE
             </p>
-            <h1 style={{ fontSize: 17, fontWeight: 600, color: '#1A1A1A' }}>
+            <h1 style={{ fontSize: 17, fontWeight: 600, color: '#F2F1EE' }}>
               {user.firstName}'s CFO Room
             </h1>
           </div>
@@ -168,16 +168,16 @@ export default function BusinessIntelligencePage() {
           onClick={() => setLiveOn(v => !v)}
           className="flex items-center gap-2"
           style={{
-            fontSize: 11, color: liveOn ? '#3D7A5E' : '#888',
-            background: liveOn ? 'rgba(61,122,94,0.12)' : 'rgba(0,0,0,0.05)',
+            fontSize: 11, color: liveOn ? '#6FCF97' : '#8B8B96',
+            background: liveOn ? 'rgba(111,207,151,0.12)' : 'rgba(255,255,255,0.05)',
             padding: '6px 12px', borderRadius: 999, fontWeight: 600,
             letterSpacing: '0.08em',
           }}
         >
           <span style={{
             width: 7, height: 7, borderRadius: 999,
-            background: liveOn ? '#3D7A5E' : '#888',
-            boxShadow: liveOn ? '0 0 0 4px rgba(61,122,94,0.18)' : 'none',
+            background: liveOn ? '#6FCF97' : '#8B8B96',
+            boxShadow: liveOn ? '0 0 0 4px rgba(111,207,151,0.18)' : 'none',
           }} />
           {liveOn ? 'LIVE' : 'PAUSED'}
         </button>
@@ -200,7 +200,7 @@ export default function BusinessIntelligencePage() {
         {/* ── Tabs ─────────────────────────── */}
         <div style={{
           display: 'flex', gap: 6, marginTop: 28, marginBottom: 16,
-          borderBottom: '1px solid rgba(0,0,0,0.07)', paddingBottom: 0,
+          borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: 0,
         }}>
           {(['pulse','forecast','streams','tax'] as const).map(t => (
             <button
@@ -209,9 +209,9 @@ export default function BusinessIntelligencePage() {
               style={{
                 padding: '8px 14px',
                 fontSize: 13,
-                color: tab === t ? '#1A1A1A' : '#888',
+                color: tab === t ? '#F2F1EE' : '#888',
                 fontWeight: tab === t ? 600 : 500,
-                borderBottom: `2px solid ${tab === t ? '#1A1A1A' : 'transparent'}`,
+                borderBottom: `2px solid ${tab === t ? '#F2F1EE' : 'transparent'}`,
                 marginBottom: -1,
               }}
             >
@@ -230,12 +230,12 @@ export default function BusinessIntelligencePage() {
 
         {/* ── What-If Simulator ───────────── */}
         <div style={{
-          background: 'white', borderRadius: 20, padding: 22, marginTop: 24,
-          border: '1px solid rgba(0,0,0,0.06)',
+          background: '#15151B', borderRadius: 20, padding: 22, marginTop: 24,
+          border: '1px solid rgba(255,255,255,0.06)',
         }}>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <div className="flex items-center gap-2" style={{ color: '#888', fontSize: 11, letterSpacing: '0.14em' }}>
+              <div className="flex items-center gap-2" style={{ color: '#8B8B96', fontSize: 11, letterSpacing: '0.14em' }}>
                 <Sparkles size={12} /> WHAT IF SIMULATOR
               </div>
               <h2 style={{ fontSize: 18, fontWeight: 600, marginTop: 4 }}>
@@ -243,7 +243,7 @@ export default function BusinessIntelligencePage() {
               </h2>
             </div>
             <div style={{
-              background: '#1A1A1A', color: 'white', borderRadius: 12,
+              background: 'linear-gradient(135deg, #7B6FE8 0%, #5C4FD8 100%)', color: 'white', borderRadius: 12,
               padding: '10px 14px', minWidth: 180,
             }}>
               <p style={{ fontSize: 10, opacity: 0.6, letterSpacing: '0.14em' }}>NEW RUNWAY</p>
@@ -289,12 +289,14 @@ function BriefingCard({ tick, firstName }: { tick: number; firstName: string }) 
 
   return (
     <div style={{
-      background: '#1A1A1A', color: 'white', borderRadius: 20,
+      background: 'linear-gradient(135deg, #15151B 0%, #1C1C24 100%)',
+      color: '#F2F1EE', borderRadius: 20,
       padding: 22, position: 'relative', overflow: 'hidden',
+      border: '1px solid rgba(123,111,232,0.18)',
     }}>
       <div style={{
         position: 'absolute', top: -40, right: -40, width: 220, height: 220,
-        background: 'radial-gradient(circle, rgba(80,90,152,0.45) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(123,111,232,0.35) 0%, transparent 70%)',
       }} />
       <div className="flex items-center gap-2" style={{ opacity: 0.7, fontSize: 11, letterSpacing: '0.14em' }}>
         <Sparkles size={12} /> MARCUS · CFO BRIEFING
@@ -306,7 +308,7 @@ function BriefingCard({ tick, firstName }: { tick: number; firstName: string }) 
         Morning {firstName}. {current}
       </p>
       <div className="flex gap-2 mt-4" style={{ position: 'relative' }}>
-        <button style={pillBtn('white','#1A1A1A')}>Pull this into a deck</button>
+        <button style={pillBtn('white','#F2F1EE')}>Pull this into a deck</button>
         <button style={pillBtn('rgba(255,255,255,0.12)','white')}>Open in chat</button>
       </div>
     </div>
@@ -316,13 +318,13 @@ function BriefingCard({ tick, firstName }: { tick: number; firstName: string }) 
 function KpiCard({ k }: { k: KPI }) {
   const positive = k.delta >= 0;
   const good = positive === k.positiveIsGood;
-  const color = good ? '#3D7A5E' : '#C0392B';
+  const color = good ? '#6FCF97' : '#FF6B6B';
   return (
     <div style={{
-      background: 'white', borderRadius: 16, padding: 14,
-      border: '1px solid rgba(0,0,0,0.06)',
+      background: '#15151B', borderRadius: 16, padding: 14,
+      border: '1px solid rgba(255,255,255,0.06)',
     }}>
-      <div className="flex items-center justify-between" style={{ color: '#888' }}>
+      <div className="flex items-center justify-between" style={{ color: '#8B8B96' }}>
         <div className="flex items-center gap-1.5" style={{ fontSize: 11, letterSpacing: '0.08em' }}>
           {k.icon}{k.label.toUpperCase()}
         </div>
@@ -331,7 +333,7 @@ function KpiCard({ k }: { k: KPI }) {
           {Math.abs(k.delta).toFixed(1)}%
         </div>
       </div>
-      <p style={{ fontSize: 22, fontWeight: 600, color: '#1A1A1A', marginTop: 6 }}>{k.value}</p>
+      <p style={{ fontSize: 22, fontWeight: 600, color: '#F2F1EE', marginTop: 6 }}>{k.value}</p>
       <Spark series={k.series} color={color} />
     </div>
   );
@@ -354,13 +356,13 @@ function Spark({ series, color }: { series: number[]; color: string }) {
 }
 
 function AnomalyRadar() {
-  const sevColor = (s: string) => s === 'high' ? '#C0392B' : s === 'med' ? '#E67E22' : '#888';
+  const sevColor = (s: string) => s === 'high' ? '#FF6B6B' : s === 'med' ? '#F2C94C' : '#8B8B96';
   return (
-    <div style={{ background: 'white', borderRadius: 20, padding: 4, border: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ background: '#15151B', borderRadius: 20, padding: 4, border: '1px solid rgba(255,255,255,0.06)' }}>
       {anomalies.map((a, i) => (
         <div key={a.id} style={{
           padding: '16px 18px',
-          borderBottom: i < anomalies.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+          borderBottom: i < anomalies.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
           display: 'flex', gap: 14, alignItems: 'flex-start',
         }}>
           <div style={{
@@ -372,15 +374,15 @@ function AnomalyRadar() {
           </div>
           <div style={{ flex: 1 }}>
             <div className="flex items-center gap-2">
-              <p style={{ fontWeight: 600, color: '#1A1A1A', fontSize: 14 }}>{a.title}</p>
+              <p style={{ fontWeight: 600, color: '#F2F1EE', fontSize: 14 }}>{a.title}</p>
               <span style={{
                 fontSize: 9, letterSpacing: '0.12em', padding: '2px 8px', borderRadius: 999,
                 background: `${sevColor(a.sev)}1A`, color: sevColor(a.sev), fontWeight: 600,
               }}>{a.sev.toUpperCase()}</span>
             </div>
-            <p style={{ color: '#555', fontSize: 13, marginTop: 4, lineHeight: 1.45 }}>{a.note}</p>
+            <p style={{ color: '#8B8B96', fontSize: 13, marginTop: 4, lineHeight: 1.45 }}>{a.note}</p>
           </div>
-          <button style={pillBtn('rgba(0,0,0,0.05)','#1A1A1A')}>Investigate</button>
+          <button style={pillBtn('rgba(255,255,255,0.05)','#F2F1EE')}>Investigate</button>
         </div>
       ))}
     </div>
@@ -415,28 +417,28 @@ function Forecast({ hireAdds, priceLift }: { hireAdds: number; priceLift: number
     series.map((s, i) => `${i === 0 ? 'M' : 'L'} ${toX(i)} ${toY(s[key])}`).join(' ');
 
   return (
-    <div style={{ background: 'white', borderRadius: 20, padding: 22, border: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ background: '#15151B', borderRadius: 20, padding: 22, border: '1px solid rgba(255,255,255,0.06)' }}>
       <div className="flex items-center justify-between mb-3">
         <div>
-          <p style={{ fontSize: 11, color: '#888', letterSpacing: '0.14em' }}>13-WEEK CASH FORECAST</p>
+          <p style={{ fontSize: 11, color: '#8B8B96', letterSpacing: '0.14em' }}>13-WEEK CASH FORECAST</p>
           <h3 style={{ fontSize: 17, fontWeight: 600 }}>Projection ($ millions)</h3>
         </div>
-        <div className="flex gap-3" style={{ fontSize: 11, color: '#555' }}>
-          <Legend color="#3D7A5E" label="Optimistic" />
-          <Legend color="#505A98" label="Base" />
-          <Legend color="#C0392B" label="With new hires" />
+        <div className="flex gap-3" style={{ fontSize: 11, color: '#8B8B96' }}>
+          <Legend color="#6FCF97" label="Optimistic" />
+          <Legend color="#7B6FE8" label="Base" />
+          <Legend color="#FF6B6B" label="With new hires" />
         </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 240 }}>
         {[0,1,2,3].map(i => {
           const y = 10 + (i / 3) * (H - 30);
-          return <line key={i} x1={30} x2={W-20} y1={y} y2={y} stroke="rgba(0,0,0,0.05)" />;
+          return <line key={i} x1={30} x2={W-20} y1={y} y2={y} stroke="rgba(255,255,255,0.05)" />;
         })}
-        <path d={line('opt')}  fill="none" stroke="#3D7A5E" strokeWidth={2.2} />
-        <path d={line('base')} fill="none" stroke="#505A98" strokeWidth={2.2} strokeDasharray="4 4" />
-        <path d={line('pess')} fill="none" stroke="#C0392B" strokeWidth={2.2} />
+        <path d={line('opt')}  fill="none" stroke="#6FCF97" strokeWidth={2.2} />
+        <path d={line('base')} fill="none" stroke="#7B6FE8" strokeWidth={2.2} strokeDasharray="4 4" />
+        <path d={line('pess')} fill="none" stroke="#FF6B6B" strokeWidth={2.2} />
       </svg>
-      <p style={{ fontSize: 12, color: '#555', marginTop: 10, lineHeight: 1.5 }}>
+      <p style={{ fontSize: 12, color: '#8B8B96', marginTop: 10, lineHeight: 1.5 }}>
         Move the simulator sliders below — the optimistic and pessimistic curves update live.
       </p>
     </div>
@@ -445,8 +447,8 @@ function Forecast({ hireAdds, priceLift }: { hireAdds: number; priceLift: number
 
 function Streams({ streams, total }: { streams: typeof incomeStreams, total: number }) {
   return (
-    <div style={{ background: 'white', borderRadius: 20, padding: 22, border: '1px solid rgba(0,0,0,0.06)' }}>
-      <p style={{ fontSize: 11, color: '#888', letterSpacing: '0.14em' }}>INCOME STREAMS · LAST 30 DAYS</p>
+    <div style={{ background: '#15151B', borderRadius: 20, padding: 22, border: '1px solid rgba(255,255,255,0.06)' }}>
+      <p style={{ fontSize: 11, color: '#8B8B96', letterSpacing: '0.14em' }}>INCOME STREAMS · LAST 30 DAYS</p>
       <h3 style={{ fontSize: 17, fontWeight: 600, marginBottom: 18 }}>
         ${total.toLocaleString()} across {streams.length} sources
       </h3>
@@ -460,11 +462,11 @@ function Streams({ streams, total }: { streams: typeof incomeStreams, total: num
           <div key={s.name} className="flex items-center justify-between" style={{ fontSize: 13 }}>
             <div className="flex items-center gap-2">
               <span style={{ width: 9, height: 9, borderRadius: 2, background: s.color, display: 'inline-block' }} />
-              <span style={{ color: '#1A1A1A' }}>{s.name}</span>
+              <span style={{ color: '#F2F1EE' }}>{s.name}</span>
             </div>
-            <div style={{ color: '#555' }}>
+            <div style={{ color: '#8B8B96' }}>
               ${s.amount.toLocaleString()}
-              <span style={{ color: '#888', marginLeft: 8 }}>{(s.portion * 100).toFixed(1)}%</span>
+              <span style={{ color: '#8B8B96', marginLeft: 8 }}>{(s.portion * 100).toFixed(1)}%</span>
             </div>
           </div>
         ))}
@@ -485,17 +487,17 @@ function TaxLiability() {
   const gap      = total - reserved;
 
   return (
-    <div style={{ background: 'white', borderRadius: 20, padding: 22, border: '1px solid rgba(0,0,0,0.06)' }}>
+    <div style={{ background: '#15151B', borderRadius: 20, padding: 22, border: '1px solid rgba(255,255,255,0.06)' }}>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p style={{ fontSize: 11, color: '#888', letterSpacing: '0.14em' }}>LIVE TAX LIABILITY · 2025</p>
+          <p style={{ fontSize: 11, color: '#8B8B96', letterSpacing: '0.14em' }}>LIVE TAX LIABILITY · 2025</p>
           <h3 style={{ fontSize: 17, fontWeight: 600 }}>
             ${total.toLocaleString()} estimated · ${reserved.toLocaleString()} reserved
           </h3>
         </div>
         <div style={{
           background: gap > 0 ? 'rgba(192,57,43,0.1)' : 'rgba(61,122,94,0.12)',
-          color: gap > 0 ? '#C0392B' : '#3D7A5E',
+          color: gap > 0 ? '#FF6B6B' : '#6FCF97',
           padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
         }}>
           {gap > 0 ? `Under-reserved by $${gap.toLocaleString()}` : 'Fully reserved'}
@@ -504,14 +506,14 @@ function TaxLiability() {
       {rows.map((r,i) => (
         <div key={r.label} style={{
           padding: '12px 0',
-          borderBottom: i < rows.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+          borderBottom: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
           display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 8,
           fontSize: 13, alignItems: 'center',
         }}>
-          <span style={{ color: '#1A1A1A', fontWeight: 500 }}>{r.label}</span>
-          <span style={{ color: '#555' }}>Due {r.due}</span>
-          <span style={{ color: '#1A1A1A' }}>${r.amount.toLocaleString()}</span>
-          <span style={{ color: r.reserved >= r.amount ? '#3D7A5E' : '#C0392B' }}>
+          <span style={{ color: '#F2F1EE', fontWeight: 500 }}>{r.label}</span>
+          <span style={{ color: '#8B8B96' }}>Due {r.due}</span>
+          <span style={{ color: '#F2F1EE' }}>${r.amount.toLocaleString()}</span>
+          <span style={{ color: r.reserved >= r.amount ? '#6FCF97' : '#FF6B6B' }}>
             ${r.reserved.toLocaleString()} reserved
           </span>
         </div>
@@ -540,11 +542,11 @@ function AskMarcus() {
 
   return (
     <div style={{
-      background: 'white', borderRadius: 20, padding: 0, marginTop: 24,
-      border: '1px solid rgba(0,0,0,0.06)', overflow: 'hidden',
+      background: '#15151B', borderRadius: 20, padding: 0, marginTop: 24,
+      border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden',
     }}>
       <div style={{
-        padding: '16px 20px', borderBottom: '1px solid rgba(0,0,0,0.06)',
+        padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)',
         display: 'flex', alignItems: 'center', gap: 10,
       }}>
         <div style={{
@@ -554,7 +556,7 @@ function AskMarcus() {
         }}>M</div>
         <div>
           <p style={{ fontSize: 14, fontWeight: 600 }}>Ask Marcus · CFO</p>
-          <p style={{ fontSize: 11, color: '#888' }}>Reads your live P&L, cash, and tax data.</p>
+          <p style={{ fontSize: 11, color: '#8B8B96' }}>Reads your live P&L, cash, and tax data.</p>
         </div>
       </div>
 
@@ -565,8 +567,8 @@ function AskMarcus() {
             marginBottom: 10,
           }}>
             <div style={{
-              background: m.role === 'user' ? '#505A98' : 'rgba(0,0,0,0.05)',
-              color: m.role === 'user' ? 'white' : '#1A1A1A',
+              background: m.role === 'user' ? '#7B6FE8' : 'rgba(255,255,255,0.05)',
+              color: m.role === 'user' ? 'white' : '#F2F1EE',
               padding: '10px 14px', borderRadius: 14, maxWidth: '78%',
               fontSize: 13.5, lineHeight: 1.5,
             }}>{m.text}</div>
@@ -575,19 +577,20 @@ function AskMarcus() {
         <div ref={endRef} />
       </div>
 
-      <div style={{ padding: 14, borderTop: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: 8 }}>
+      <div style={{ padding: 14, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 8 }}>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
           placeholder="What if I raise prices 8% next quarter?"
           style={{
-            flex: 1, background: 'rgba(0,0,0,0.04)', border: 'none',
+            flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)',
             outline: 'none', borderRadius: 12, padding: '11px 14px', fontSize: 13.5,
+            color: '#F2F1EE',
           }}
         />
         <button onClick={send} style={{
-          background: '#1A1A1A', color: 'white', borderRadius: 12,
+          background: '#7B6FE8', color: 'white', borderRadius: 12,
           padding: '0 14px', display: 'flex', alignItems: 'center',
         }}><Send size={15} /></button>
       </div>
@@ -608,15 +611,15 @@ function Slider({
   return (
     <div style={{ marginTop: 16 }}>
       <div className="flex items-center justify-between mb-1.5">
-        <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A' }}>{label}</p>
-        <p style={{ fontSize: 11, color: '#888' }}>{sub}</p>
+        <p style={{ fontSize: 13, fontWeight: 600, color: '#F2F1EE' }}>{label}</p>
+        <p style={{ fontSize: 11, color: '#8B8B96' }}>{sub}</p>
       </div>
       <input
         type="range"
         min={min} max={max}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: '100%', accentColor: '#505A98' }}
+        style={{ width: '100%', accentColor: '#7B6FE8' }}
       />
     </div>
   );
