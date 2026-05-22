@@ -23,6 +23,9 @@ const PRO_FEATURES = [
 
 const ELITE_FEATURES = [
   'Everything in Pro',
+  'Business Intelligence CFO Room',
+  'Live cash, runway, and tax tracking',
+  '13-week forecast and what-if simulator',
   'Business finances and cash flow',
   'Meeting intelligence',
   'Priority access and support',

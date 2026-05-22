@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Plus, LogOut, Settings, Plug } from 'lucide-react';
+import { X, Plus, LogOut, Settings, Plug, BarChart3 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { User, Conversation } from '@/types';
 import { clearStoredUser } from '@/lib/auth';
@@ -164,6 +164,31 @@ export default function Sidebar({
 
       {/* ── Bottom: nav + user ── */}
       <div style={{ padding: '10px 8px 16px' }}>
+        {/* Business Intelligence — Elite only */}
+        {user.tier === 'elite' && (
+          <button
+            onClick={() => nav('/business-intelligence')}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-all mb-2"
+            style={{
+              background: '#1A1A1A',
+              color: 'white',
+              fontSize: 12.5,
+              fontWeight: 500,
+              letterSpacing: '0.01em',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#2C2C2C')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#1A1A1A')}
+          >
+            <BarChart3 size={14} />
+            <span style={{ flex: 1, textAlign: 'left' }}>Business Intelligence</span>
+            <span style={{
+              fontSize: 8.5, padding: '2px 6px', borderRadius: 999,
+              background: 'rgba(255,255,255,0.14)', letterSpacing: '0.08em',
+              fontWeight: 600,
+            }}>ELITE</span>
+          </button>
+        )}
+
         {/* Settings + Integrations */}
         <div className="flex gap-1 mb-2">
           <button
