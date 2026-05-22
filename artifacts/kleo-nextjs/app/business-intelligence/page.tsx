@@ -4,8 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft, ArrowUpRight, ArrowDownRight, Lock, Sparkles, AlertTriangle,
-  TrendingUp, Wallet, Building2, LineChart, Send, Play, Pause, Zap,
-  CircleDollarSign, BarChart3, Calendar, Briefcase, Globe2,
+  TrendingUp, Wallet, LineChart, Send, Zap, BarChart3, Calendar,
 } from 'lucide-react';
 import { getStoredUser } from '@/lib/auth';
 import { User } from '@/types';
